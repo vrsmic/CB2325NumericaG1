@@ -3,7 +3,7 @@ import math as mt
 import random
 import numpy as np
 
-def function_one_variable(x):
+def _function_one_variable(x):
     f = mt.sin(x)
     return f
 
@@ -65,4 +65,5 @@ integral2 = monte_carlo_two_variables(0,1,0,1,function_two_variables, n)
 integral = monte_carlo(0,mt.pi,function_one_variable,n)
 print(f'Com {n} pontos, o valor calculado da integral[0,1]x[0,1] de f(x,y) = x²y foi {integral2}\n'
       f'e o valor da integral[0,pi] de f(x) = sin(x) foi {integral}')
+
 
