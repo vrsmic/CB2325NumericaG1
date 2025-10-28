@@ -11,6 +11,14 @@ def lin_interp(x,y):
                 y1 = b + (x1-x[i-1]) * a
                 
                 return y1
+    fig, ax = plt.subplots()
+
+    x_points = np.linspace(0, 3, 100)
+    y_points = [f(xp) for xp in x_points]
+
+    ax.scatter(x, y)
+    ax.plot(x_points, y_points)
+    plt.show()
     return f
 
 def poly_interp(x,y):
@@ -25,12 +33,3 @@ if __name__=='__main__':
 
     p = lin_interp(x,y)
     print(p(1.5))
-
-    fig, ax = plt.subplots()
-
-    x_points = np.linspace(0, 3, 100)
-    y_points = [p(xp) for xp in x_points]
-
-    ax.scatter(x, y)
-    ax.plot(x_points, y_points)
-    plt.show()
