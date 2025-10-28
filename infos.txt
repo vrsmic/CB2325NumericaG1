@@ -1,0 +1,8 @@
+comandos de build e upload no pypi
+
+python -m build
+
+twine upload --repository testpypi dist/*
+
+download: 
+pip install -i https://test.pypi.org/simple/ CB2325-numerica-G1
