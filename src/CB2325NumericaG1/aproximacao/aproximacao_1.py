@@ -20,3 +20,36 @@ def regressao_linear(x, y):
   b = y_media - (a * x_media)
 
   return a, b
+
+def taylor(function, x_symbol, point, times):
+    """
+        Calcula e imprime o Polinômio de Taylor de uma função simbólica.
+
+        Esta função gera o polinômio que aproxima a função 'function' em torno de um ponto 'point'.
+
+        Args:
+            function: A função simbólica a ser aproximada.
+                Ex: sp.exp(x), sp.sin(x), sp.E**x
+            x_symbol: A variável simbólica principal da função.
+                Ex: sp.symbols('x')
+            point (float ou int): O ponto 'a' (centro) em torno do qual a série será expandida.
+            times (int): O número de termos do polinômio. A ordem máxima (grau)
+                do polinômio resultante será de 'times - 1'
+
+        Returns:
+            None. A função imprime o polinômio simbólico resultante no console.
+        """
+    
+    f_poly = 0 # Inicia o polinômio, teremos que adicionar os termos aqui depois.
+
+    for i in range(times):
+        # Calcula a i-ésima derivada simbólica (f"'(x))
+        derivada_i_simbolica = sp.diff(function, x_symbol, i) # Calcula a i-ésima derivada.
+        derivada_no_ponto = derivada_i_simbolica.subs(x_symbol, point) # Avalia a derivada.
+        fatorial = math.factorial(i) # Calcula o fatorial.
+
+    termo_polinomio = (derivada_no_ponto * (x_symbol - point)**i) / fatorial
+    f_poly += termo_polinomio
+
+    print(f"O Polinômio de Taylor com {times} termos é:")
+    print(f_poly)
