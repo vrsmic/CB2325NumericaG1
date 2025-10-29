@@ -1,0 +1,29 @@
+# Basicamente coisas a serem ignoradas pelo git, quando vc der git add, o git nao ira sequer olhar para esses arquivos
+# eh bem util para vc n ficar adicionando programas compilados e tal
+# se vc tiver alguma coisa q vc tbm queira q o git ignore, da pra colocar aq
+
+# Python cache
+# isso o python gera automaticamente quando vc roda um programa em python, mas n tem pq ir pro github
+__pycache__/
+*.pyc
+*.pyo
+
+# Virtual Environments
+# o ideal eh criar um na sua maquina. os pcs do impatech já vem com um automatico
+# basicamente um ambiente virtual (venv) eh uma forma de instalar pacotes do python de forma "separada"
+
+venv/
+.venv/
+env/
+
+# IDE files
+# Isso aqui o vs code cria. dependendo da IDE que vc use, vai ser outro nome, ai bota aq tb
+.vscode/
+
+# Build artifacts
+# quando vc faz o build do seu programa (pega toda essa estrutura de arquivos do python que a gente fez
+# e gera um package) vai gerar esses arquivos, a gente tbm n quer eles no git
+dist/
+build/
+*.egg-info/
+

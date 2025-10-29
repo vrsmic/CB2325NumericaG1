@@ -1,0 +1,1 @@
+from .erros_f import erro_numerico
