@@ -1,9 +1,15 @@
+# Python 3
+
+# Bibliotecas.
 import numpy as np
 import sympy as sp
 import math
 import matplotlib.pyplot as plt
 
+## Funções polinomiais de aproximação.
+
 # Regressão Linear.
+# ----------------------------------------------------------------------
 def regressao_linear(x, y, plot=False):
     """
     Calcula o coeficiente angular 'a' e o coeficiente linear 'b' de uma regressão linear simples (y = ax + b).
@@ -36,8 +42,9 @@ def regressao_linear(x, y, plot=False):
     if len(x) < 2:
         raise ValueError("A regressão requer pelo menos 2 pontos.")
 
-    x_media = np.mean(x) # Calcula a média de x.
-    y_media = np.mean(y) # Calcula a média de y.
+    # Calcula a média de x e de y.
+    x_media = np.mean(x)
+    y_media = np.mean(y) 
 
     numerador = np.sum((x - x_media) * (y - y_media))
     denominador = np.sum((x - x_media)**2)
@@ -45,35 +52,126 @@ def regressao_linear(x, y, plot=False):
     b = y_media - (a * x_media)
 
     if plot:
-        x1 = x # Nota: Também pode ser um np.array.
-        y1 = y # Nota: Também pode ser um np.array.
-
         print(f"Coeficientes encontrados:")
-        print(f"Inclinação (a): {a:.3f}")
-        print(f"Intercepto (b): {b:.3f}")
+        print(f"Inclinação (a): {a:.4f}")
+        print(f"Intercepto (b): {b:.4f}")
 
-        x2 = np.linspace(min(x1), max(x1), 100) # cria 100 pontos entre o menor e o maior ponto de x1, para criar a reta do primeiro ponto ao fim.
-        y2 = (a * x2) + b # Equação da reta de regressão.
+        # Cria 100 pontos uniformemente espaçados entre o menor e o maior ponto de x1, para criar a reta do primeiro ponto ao fim.
+        x2 = np.linspace(min(x), max(x), 100) 
 
-        plt.scatter(x1, y1, color='red', label='Dados Originais') # Plot dos dados.
-        plt.plot(x2, y2, color='blue', linewidth=2, label=f'Reta de Regressão: y = {a:.2f}x + {b:.2f}') # Plot da reta.
+        # Equação da reta de regressão.
+        y2 = (a * x2) + b 
 
-        x_margin = (max(x1) - min(x1)) * 0.1 # Calcula a margem de x.
-        y_margin = (max(y1) - min(y1)) * 0.1 # Calcula a margem de y.
+        # Plot dos dados e da reta.
+        plt.scatter(x, y, color='red', label='Dados Originais') 
+        plt.plot(x2, y2, color='blue', linewidth=2, label=f'Reta de Regressão: y = {a:.2f}x + {b:.2f}')
 
-        # Plot
-        plt.xlim(min(x1) - x_margin, max(x1) + x_margin) # Limita a margem de x.
-        plt.ylim(min(y1) - y_margin, max(y1) + y_margin) # Limita a margem de y.
+        # Calcula a margem de x e de y.
+        x_margin = (max(x) - min(x)) * 0.1
+        y_margin = (max(y) - min(y)) * 0.1
+
+        # Limita a margem de x e de y.
+        plt.xlim(min(x) - x_margin, max(x) + x_margin)
+        plt.ylim(min(y) - y_margin, max(y) + y_margin)
+
+        # Legendas e grade.
         plt.title("Regressão Linear")
         plt.xlabel("Eixo X")
         plt.ylabel("Eixo Y")
         plt.legend()
+        plt.grid(True) # Grade quadriculada.
+
+        # Plot.
+        plt.show()
+
+    return a, b
+
+# Regressão logarítimica.
+# ----------------------------------------------------------------------
+def regressao_logaritmica(x, y, plot=False):
+    """
+    Calcula os coeficientes 'a' e 'b' de uma regressão logarítmica do tipo (y = a * ln(x) + b), e 
+    optacionalmente, plota a função de regressão.
+
+    Este método funciona transformando a variável preditora 'x', aplicando o logaritmo natural (ln),
+    depois utilizando a função 'regressao_linear' padrão nos dados transformados -> (ln(x), y).
+
+    Parâmetros:
+    ----------
+    x: Vetor contendo os valores da variável independente.
+    IMPORTANTE: Todos os valores de 'x' devem ser estritamente positivos (x > 0), pois o logarítmo de valores negativos não é definido.
+    
+    y: Vetor contendo os valores da variável dependente.
+
+    plot (bool, opcional): Se True, gera um gráfico comparando a função original e o polinômio de Taylor. Por padrão é False.
+
+    Retorna:
+    -------
+    tuple
+        Uma tupla contendo (a, b), onde:
+        a (float): Coeficiente 'a' que multiplica o termo ln(x).
+        b (float): Coeficiente 'b' (intercepto) da linha de regressão.
+    
+    Plot (Opcional): Plot dos pontos e da função aproximadora.
+    
+    Levanta:
+    -------
+    ValueError
+        Herdado da função 'regressao_linear':
+        - Se 'x' e 'y' tiverem comprimentos diferentes.
+        - Se tiverem menos de 2 pontos de dados.
+    RuntimeWarning
+        Pode ser levantado pelo `numpy` se 'x' contiver valores
+        menores ou iguais a zero, resultando em 'NaN' ou '-inf'.
+    """
+
+    # Verifica se algum x é negativo, pois log(negativo) é indefinido e dará erro.
+    if np.any(x <= 0):
+        raise ValueError("Todos os valores de 'x' devem ser positivos para a regressão logarítmica.")
+    
+    # Transforma a variável x aplicando o logaritmo natural
+    log_x = np.log(x)
+
+    # Usa a função de regressão linear já existente nos dados transformados.
+    a, b = regressao_linear(log_x, y)
+
+    if plot:
+        print(f"Coeficientes encontrados:")
+        print(f"a: {a:.4f}")
+        print(f"b: {b:.4f}")
+
+        # Cria 100 pontos uniformemente espaçados entre o menor e o maior ponto de x1, para criar a função do primeiro ponto ao fim.
+        x2 = np.linspace(min(x), max(x), 100)
+
+        # Equação da função de regressão.
+        y2 = (a * np.log(x2)) + b
+
+        # Plot dos dados e da função.
+        plt.scatter(x, y, color='red', label='Dados Originais')
+        plt.plot(x2, y2, color='blue', linewidth=2, label=f'Função de Regressão: y = {a:.2f}*ln(x) + {b:.2f}')
+
+        # Calcula a margem de x e de y.
+        x_margin = (max(x) - min(x)) * 0.1
+        y_margin = (max(y) - min(y)) * 0.1
+
+        # Limita a margem de x e de y.
+        plt.xlim(min(x) - x_margin, max(x) + x_margin)
+        plt.ylim(min(y) - y_margin, max(y) + y_margin)
+
+        # Legendas e grade.
+        plt.title("Regressão Logarítmica")
+        plt.xlabel("Eixo X")
+        plt.ylabel("Eixo Y")
+        plt.legend()
         plt.grid(False) # Grade quadriculada.
+
+        # Plot.
         plt.show()
 
     return a, b
 
 # Polinômio de Taylor.
+# ----------------------------------------------------------------------
 def polinomio_de_taylor(function, x_symbol, point, times, plot=False):
     """
     Calcula, imprime e opcionalmente plota o Polinômio de Taylor
@@ -81,6 +179,7 @@ def polinomio_de_taylor(function, x_symbol, point, times, plot=False):
 
     Esta função utiliza a biblioteca SymPy para realizar a
     diferenciação simbólica e a construção do polinômio.
+
     Se plot = True, utiliza Numpy e Matplotlib para visualizar a aproximação.
 
     Parâmetros:
@@ -105,30 +204,32 @@ def polinomio_de_taylor(function, x_symbol, point, times, plot=False):
     ------------
     - É necessário ter as bibliotecas `sympy` (importada como `sp`)
       e `math` importadas no escopo.
-      `numpy` (importado como `np`) - Necessário se plot=True
-      `matplotlib.pyplot` (importado como `plt`) - Necessário se plot=True
+      `numpy` (importado como `np`) - Necessário se plot=True.
+      `matplotlib.pyplot` (importado como `plt`) - Necessário se plot=True.
     """
 
-    f_poly = 0 # Inicia o polinômio, teremos que adicionar os termos aqui depois.
+    # Inicia o polinômio, iremos adicionar os termos aqui depois.
+    f_poly = 0
 
+    # Operação equivalente ao somatório do polinômio de Taylor.
     for i in range(times):
             
-            # Calcula a i-ésima derivada simbólica (f"'(x))
+            # Calcula a i-ésima derivada simbólica (f"'(x)).
             derivada_i_simbolica = sp.diff(function, x_symbol, i)
             
-            # Avalia a derivada no ponto 'a'
+            # Avalia a derivada no ponto 'a'.
             derivada_no_ponto = derivada_i_simbolica.subs(x_symbol, point)
             
-            # Calcula o fatorial
+            # Calcula o fatorial.
             fatorial = math.factorial(i)
 
-            # Monta o i-ésimo termo do polinômio
+            # Monta o i-ésimo termo do polinômio.
             termo_polinomio = (derivada_no_ponto * (x_symbol - point)**i) / fatorial
             
-            # Adiciona ao polinômio total
+            # Adiciona ao polinômio total.
             f_poly += termo_polinomio
 
-    print(f"O Polinômio de Taylor com {times} termos é:")
+    print(f"O polinômio de Taylor com {times} termos é:")
     print(f_poly)
     
     if plot:
@@ -157,7 +258,7 @@ def polinomio_de_taylor(function, x_symbol, point, times, plot=False):
                 linewidth=2, linestyle='--')
             
         # Plota o polinômio.
-        plt.plot(x_vals, y_poly, color='blue', label=f"Polinômio (Grau {times-1}): ${sp.latex(f_poly)}$", 
+        plt.plot(x_vals, y_poly, color='blue', label=f"Polinômio de (Grau {times-1}): ${sp.latex(f_poly)}$", 
                     linewidth=2, alpha=0.8)
             
         # Marca o ponto de expansão 'point'.
@@ -175,79 +276,9 @@ def polinomio_de_taylor(function, x_symbol, point, times, plot=False):
 
         # Define limites de 'y'.
         y_range = np.nanmax(y_original) - np.nanmin(y_original)
-        if y_range < 1: y_range = 10 # Evita zoom extremo
+        if y_range < 1: y_range = 10 # Evita o zoom extremo.
         plt.ylim(np.nanmin(y_original) - y_range * 0.5, np.nanmax(y_original) + y_range * 0.5)
 
+        # Plot.
         plt.show()
-
-def regressao_logaritmica(x, y, plot=False):
-    """
-    Calcula os coeficientes 'a' e 'b' de uma regressão logarítmica do tipo (y = a * ln(x) + b), e 
-    optacionalmente plota a função de regressão
-
-    Este método funciona transformando a variável preditora 'x' aplicando o logaritmo natural (ln),
-    depois utilizando a função 'regressao_linear' padrão nos dados transformados (ln(x), y).
-
-    Parâmetros:
-    ----------
-    x: Vetor contendo os valores da variável independente (preditora).
-        IMPORTANTE: Todos os valores de 'x' devem ser estritamente
-        positivos (x > 0), pois o logarítmo de valores negativos não é definido.
-    
-    y: Vetor contendo os valores da variável dependente (resposta).
-
-    plot (bool, opcional): Se True, gera um gráfico comparando a função original e o polinômio de Taylor. Por padrão é False.
-
-    Retorna:
-    -------
-    tuple
-        Uma tupla contendo (a, b), onde:
-        a (float): Coeficiente 'a' que multiplica o termo ln(x).
-        b (float): Coeficiente 'b' (intercepto) da linha de regressão.
-    
-    Plot (Opcional): Plot dos pontos e da função aproximadora.
-    
-    Levanta:
-    -------
-    ValueError
-        Herdado da função 'regressao_linear':
-        - Se 'x' e 'y' tiverem comprimentos diferentes.
-        - Se tiverem menos de 2 pontos de dados.
-    RuntimeWarning
-        Pode ser levantado pelo `numpy` se 'x' contiver valores
-        menores ou iguais a zero, resultando em 'NaN' ou '-inf'.
-    """
-    # Transforma a variável x aplicando o logaritmo natural
-    log_x = np.log(x)
-
-    # Usa a função de regressão linear já existente nos dados transformados.
-    a, b = regressao_linear(log_x, y)
-
-    if plot == True:
-        x1 = x # Nota: Também pode ser um np.array.
-        y1 = y # Nota: Também pode ser um np.array.
-
-        print(f"Coeficientes encontrados:")
-        print(f"a: {a:.3f}")
-        print(f"b: {b:.3f}")
-
-        x2 = np.linspace(min(x1), max(x1), 100) # cria 100 pontos entre o menor e o maior ponto de x1, para criar a função do primeiro ponto ao fim.
-        y2 = (a * x2) + b # Equação da função de regressão.
-
-        plt.scatter(x1, y1, color='red', label='Dados Originais') # Plot dos dados.
-        plt.plot(x2, y2, color='blue', linewidth=2, label=f'Função de Regressão: y = {a:.2f}x + {b:.2f}') # Plot da função.
-
-        x_margin = (max(x1) - min(x1)) * 0.1 # Calcula a margem de x.
-        y_margin = (max(y1) - min(y1)) * 0.1 # Calcula a margem de y.
-
-        # Plot
-        plt.xlim(min(x1) - x_margin, max(x1) + x_margin) # Limita a margem de x.
-        plt.ylim(min(y1) - y_margin, max(y1) + y_margin) # Limita a margem de y.
-        plt.title("Regressão Logarítmica")
-        plt.xlabel("Eixo X")
-        plt.ylabel("Eixo Y")
-        plt.legend()
-        plt.grid(False) # Grade quadriculada.
-        plt.show()
-
-    return a, b
+# ----------------------------------------------------------------------
