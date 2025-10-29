@@ -45,7 +45,7 @@ def regressao_linear(x, y):
 
     return a, b
 
-def taylor(function, x_symbol, point, times):
+def polinomio_de_taylor(function, x_symbol, point, times):
     """
     Calcula e imprime a fórmula simbólica do Polinômio de Taylor
     para uma dada função em torno de um ponto.
@@ -86,3 +86,43 @@ def taylor(function, x_symbol, point, times):
 
     print(f"O Polinômio de Taylor com {times} termos é:")
     print(f_poly)
+
+def regressao_logaritmica(x, y):
+    """
+    Calcula os coeficientes 'a' e 'b' de uma regressão logarítmica do tipo (y = a * ln(x) + b).
+
+    Este método funciona transformando a variável preditora 'x' aplicando o logaritmo natural (ln),
+    depois utilizando a função 'regressao_linear' padrão nos dados transformados (ln(x), y).
+
+    Parâmetros:
+    ----------
+    x: Vetor contendo os valores da variável independente (preditora).
+        IMPORTANTE: Todos os valores de 'x' devem ser estritamente
+        positivos (x > 0), pois o logarítmo de valores negativos não é definido.
+    
+    y: Vetor contendo os valores da variável dependente (resposta).
+
+    Retorna:
+    -------
+    tuple
+        Uma tupla contendo (a, b), onde:
+        a (float): Coeficiente 'a' que multiplica o termo ln(x).
+        b (float): Coeficiente 'b' (intercepto) da linha de regressão.
+
+    Levanta:
+    -------
+    ValueError
+        Herdado da função 'regressao_linear':
+        - Se 'x' e 'y' tiverem comprimentos diferentes.
+        - Se tiverem menos de 2 pontos de dados.
+    RuntimeWarning
+        Pode ser levantado pelo `numpy` se 'x' contiver valores
+        menores ou iguais a zero, resultando em 'NaN' ou '-inf'.
+    """
+    # Transforma a variável x aplicando o logaritmo natural
+    log_x = np.log(x)
+
+    # Usa a função de regressão linear já existente nos dados transformados.
+    a, b = regressao_linear(log_x, y)
+
+    return a, b
