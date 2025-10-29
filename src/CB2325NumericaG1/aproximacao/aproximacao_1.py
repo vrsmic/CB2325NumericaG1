@@ -45,8 +45,8 @@ def regressao_linear(x, y, plot=False):
     b = y_media - (a * x_media)
 
     if plot:
-        x1 = [] # Nota: Também pode ser um np.array.
-        y1 = [] # Nota: Também pode ser um np.array.
+        x1 = x # Nota: Também pode ser um np.array.
+        y1 = y # Nota: Também pode ser um np.array.
 
         print(f"Coeficientes encontrados:")
         print(f"Inclinação (a): {a:.3f}")
@@ -156,8 +156,8 @@ def regressao_logaritmica(x, y, plot=False):
         a (float): Coeficiente 'a' que multiplica o termo ln(x).
         b (float): Coeficiente 'b' (intercepto) da linha de regressão.
     
-    Plot (Opcional): Plot dos pontos e da função de regressão.
-
+    Plot (Opcional): Plot dos pontos e da função aproximadora.
+    
     Levanta:
     -------
     ValueError
@@ -173,5 +173,32 @@ def regressao_logaritmica(x, y, plot=False):
 
     # Usa a função de regressão linear já existente nos dados transformados.
     a, b = regressao_linear(log_x, y)
+
+    if plot == True:
+        x1 = x # Nota: Também pode ser um np.array.
+        y1 = y # Nota: Também pode ser um np.array.
+
+        print(f"Coeficientes encontrados:")
+        print(f"a: {a:.3f}")
+        print(f"b: {b:.3f}")
+
+        x2 = np.linspace(min(x1), max(x1), 100) # cria 100 pontos entre o menor e o maior ponto de x1, para criar a função do primeiro ponto ao fim.
+        y2 = (a * x2) + b # Equação da função de regressão.
+
+        plt.scatter(x1, y1, color='red', label='Dados Originais') # Plot dos dados.
+        plt.plot(x2, y2, color='blue', linewidth=2, label=f'Função de Regressão: y = {a:.2f}x + {b:.2f}') # Plot da função.
+
+        x_margin = (max(x1) - min(x1)) * 0.1 # Calcula a margem de x.
+        y_margin = (max(y1) - min(y1)) * 0.1 # Calcula a margem de y.
+
+        # Plot
+        plt.xlim(min(x1) - x_margin, max(x1) + x_margin) # Limita a margem de x.
+        plt.ylim(min(y1) - y_margin, max(y1) + y_margin) # Limita a margem de y.
+        plt.title("Regressão Logarítmica")
+        plt.xlabel("Eixo X")
+        plt.ylabel("Eixo Y")
+        plt.legend()
+        plt.grid(False) # Grade quadriculada.
+        plt.show()
 
     return a, b
