@@ -130,6 +130,55 @@ def polinomio_de_taylor(function, x_symbol, point, times, plot=False):
 
     print(f"O Polinômio de Taylor com {times} termos é:")
     print(f_poly)
+    
+    if plot:
+        print("\nGerando gráfico de comparação.")
+        
+        # Convertendo expressões simbólicas em funções numéricas.
+        # 'numpy' é usado para permitir que as funções lidem com arrays do numpy.
+        f_original_num = sp.lambdify(x_symbol, function, 'numpy')
+        f_poly_num = sp.lambdify(x_symbol, f_poly, 'numpy')
+
+        # Definindo o intervalo de plotagem.
+        # O np.linspace cria um array de pontos uniformemente espaçados.
+        x_vals = np.linspace(point - 2.5, point + 2.5, 400)
+
+        # Calcula os valores 'y' para os "pontos reais" (função original).
+        y_original = f_original_num(x_vals)
+            
+        # Calcula os valores 'y' para a "função ajustada" (polinômio).
+        y_poly = f_poly_num(x_vals)
+
+        # Cria o gráfico.
+        plt.figure(figsize=(10, 6))
+        
+        # Plota a função original.
+        plt.plot(x_vals, y_original, color='red', label=f"Função Original: ${sp.latex(function)}$", 
+                linewidth=2, linestyle='--')
+            
+        # Plota o polinômio.
+        plt.plot(x_vals, y_poly, color='blue', label=f"Polinômio (Grau {times-1}): ${sp.latex(f_poly)}$", 
+                    linewidth=2, alpha=0.8)
+            
+        # Marca o ponto de expansão 'point'.
+        y_point = f_original_num(point)
+        plt.plot(point, y_point, 'ro', label=f'Ponto de Expansão ($a={point}$)')
+
+        # Configurações gerais do gráfico.
+        plt.title(f"Aproximação de Taylor (Grau {times-1}) em torno de $x={point}$")
+        plt.xlabel(str(x_symbol))
+        plt.ylabel('$f(x)$')
+        plt.legend(fontsize='small')
+        plt.grid(True)
+        plt.axvline(x=point, color='gray', linestyle=':', linewidth=1)
+        plt.axhline(y=y_point, color='gray', linestyle=':', linewidth=1)
+
+        # Define limites de 'y'.
+        y_range = np.nanmax(y_original) - np.nanmin(y_original)
+        if y_range < 1: y_range = 10 # Evita zoom extremo
+        plt.ylim(np.nanmin(y_original) - y_range * 0.5, np.nanmax(y_original) + y_range * 0.5)
+
+        plt.show()
 
 def regressao_logaritmica(x, y, plot=False):
     """
