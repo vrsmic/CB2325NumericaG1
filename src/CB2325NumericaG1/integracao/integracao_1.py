@@ -2,7 +2,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-def trapezio(f, inicio, final, n) :
+def trapezio(f : callable[[float], float] , inicio : float, final : float, n : int, plot : bool = False) -> float :
 
     '''
     Calcula a integral aproximada de uma função usando o método 
@@ -19,6 +19,8 @@ def trapezio(f, inicio, final, n) :
     final : Limite superios da integral.
 
     n : Número de subintervalos (trapézios).
+
+    plot : Fazer plot do gráfico da integração. 
 
     -----------
 
@@ -44,36 +46,38 @@ def trapezio(f, inicio, final, n) :
     # Aplica a fórmula do trápezio.
     integral_total = step * (0.5*y[0] + sum(y[1:-1]) + 0.5*y[-1])
 
-    # Plota os trapézios.
-    for i in range(n) :
-        xi = x[i]
-        yi = y[i]
-        xii = x[i+1]
-        yii = y[i+1]
-        xs = [xi, xi, xii, xii]
-        ys = [0, yi, yii, 0]
+    if plot :
 
-        plt.fill(xs, ys, color='blue', edgecolor='black', alpha=0.7)
+        # Plota os trapézios.
+        for i in range(n) :
+            xi = x[i]
+            yi = y[i]
+            xii = x[i+1]
+            yii = y[i+1]
+            xs = [xi, xi, xii, xii]
+            ys = [0, yi, yii, 0]
+
+            plt.fill(xs, ys, color='blue', edgecolor='black', alpha=0.7)
 
 
-    # Plota a função original em vermelho.    
-    plt.plot(x, y, color = 'red', linewidth = 1, label = 'f(x)') 
+        # Plota a função original em vermelho.    
+        plt.plot(x, y, color = 'red', linewidth = 1, label = 'f(x)') 
 
-    # Plota o eixo x.
-    plt.axhline(0, color='black', linewidth=1)
+        # Plota o eixo x.
+        plt.axhline(0, color='black', linewidth=1)
 
-    # Configuração do gráfico
-    plt.axis('equal')
-    plt.title("Integração pelo método do trapézio")
-    plt.xlabel("x")
-    plt.ylabel("f(x)")
-    plt.legend()
-    plt.show()
+        # Configuração do gráfico
+        plt.axis('equal')
+        plt.title("Integração pelo método do trapézio")
+        plt.xlabel("x")
+        plt.ylabel("f(x)")
+        plt.legend()
+        plt.show()
 
     return round(integral_total, 4)
 
 
-def simpson13(f, inicio, final, n) :
+def simpson13(f : callable[[float], float] , inicio : float, final : float, n : int, plot : bool = False) -> float :
     '''
     Calcula a integral aproximada de uma função usando o método 
     de simpson 1/3 e plota as parábolas.
@@ -88,7 +92,9 @@ def simpson13(f, inicio, final, n) :
 
     final : Limite superios da integral.
 
-    n : Número de subintervalos .
+    n : Número de subintervalos.
+
+    plot : Fazer plot do gráfico da integração. 
 
     -----------
 
@@ -117,29 +123,29 @@ def simpson13(f, inicio, final, n) :
     integral_total = y[0] + y[-1] + 4 * sum(y[1 : -1: 2]) + 2 * sum(y[2: -2: 2])
     integral_total *= step/3
 
+    if plot :
+        # Plota as parábolas.
+        for i in range(0, n, 2) :
+            xi = x[i:i+3]
+            yi = y[i:i+3]
+            coef = np.polyfit(xi, yi, 2)
+            xs = np.linspace(xi[0], xi[-1], 50)
+            ys = np.polyval(coef, xs)
+            plt.fill_between(xs, ys, color='blue', edgecolor='black', alpha=0.7)
 
-    # Plota as parábolas.
-    for i in range(0, n, 2) :
-        xi = x[i:i+3]
-        yi = y[i:i+3]
-        coef = np.polyfit(xi, yi, 2)
-        xs = np.linspace(xi[0], xi[-1], 50)
-        ys = np.polyval(coef, xs)
-        plt.fill_between(xs, ys, color='blue', edgecolor='black', alpha=0.7)
 
+        # Plota a função original em vermelho.    
+        plt.scatter(x, y, color = 'red', label = 'f(x)', s = 5)
 
-    # Plota a função original em vermelho.    
-    plt.scatter(x, y, color = 'red', label = 'f(x)', s = 5)
+        # Plota o eixo x.
+        plt.axhline(0, color='black', linewidth=1)
 
-    # Plota o eixo x.
-    plt.axhline(0, color='black', linewidth=1)
-
-    # Configuração do gráfico
-    plt.axis('equal')
-    plt.title("Integração pelo método do Simpson 1/3")
-    plt.xlabel("x")
-    plt.ylabel("f(x)")
-    plt.legend()
-    plt.show()
+        # Configuração do gráfico
+        plt.axis('equal')
+        plt.title("Integração pelo método do Simpson 1/3")
+        plt.xlabel("x")
+        plt.ylabel("f(x)")
+        plt.legend()
+        plt.show()
 
     return round(integral_total, 4)
