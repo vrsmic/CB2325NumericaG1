@@ -21,15 +21,10 @@ def lin_interp(x,y):
     plt.show()
     return f
 
-def poly_interp(x,y):
-    raise NotImplementedError
-
-def hermite_interp(x,y):
-    raise NotImplementedError
-
 if __name__=='__main__':
     x = [0, 1, 2, 3]
     y = [1, 2, 0, 4]
 
     p = lin_interp(x,y)
+    print(p)
     print(p(1.5))
