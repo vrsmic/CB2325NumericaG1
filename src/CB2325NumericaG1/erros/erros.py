@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 def erro_absoluto(valor_real,valor_aprox):
     """Função que calcula o erro absoluto, que corresponde 
     à diferença entre o valor real e o valor aproximado.
@@ -28,7 +30,7 @@ def erro_relativo(valor_real,valor_aprox):
     return abs(erro_relativo)
 
 
-valor_real=input()
-valor_aprox=input()
+valor_real=Decimal(input())
+valor_aprox=Decimal(input())
 print(erro_absoluto(valor_real, valor_aprox))
 print(erro_relativo(valor_real, valor_aprox))
