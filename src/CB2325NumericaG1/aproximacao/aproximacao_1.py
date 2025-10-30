@@ -55,6 +55,10 @@ def regressao_linear(x: npt.ArrayLike, y: npt.ArrayLike, plot: bool = False) -> 
 
     numerador = np.sum((x - x_media) * (y - y_media))
     denominador = np.sum((x - x_media)**2)
+
+    if np.isclose(denominador, 0):
+        raise ValueError("Valores de 'x' são constantes. A regressão linear não pode ser calculada.")
+
     a = numerador / denominador
     b = y_media - (a * x_media)
 
