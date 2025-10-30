@@ -27,6 +27,8 @@ def erro_relativo(valor_real,valor_aprox):
     Retorna o valor do erro aproximado.
     '''
     erro_relativo=abs(valor_real-valor_aprox)/valor_real
+    if abs(valor_real-valor_aprox)%valor_real!=0:  # arredonda a divisão não exata
+        erro_relativo = round(erro_relativo, 5)    # para 5 casas decimais
     return abs(erro_relativo)
 
 
