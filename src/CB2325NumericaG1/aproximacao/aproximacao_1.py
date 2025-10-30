@@ -1,16 +1,19 @@
 # Python 3
 
-# Bibliotecas.
-import numpy as np
-import sympy as sp
+# Bibliotecas padrão.
 import math
+
+# Bibliotecas de terceiros.
+import numpy as np
+import numpy.typing as npt
+import sympy as sp
 import matplotlib.pyplot as plt
 
 ## Funções polinomiais de aproximação.
 
 # Regressão Linear.
 # ----------------------------------------------------------------------
-def regressao_linear(x, y, plot=False):
+def regressao_linear(x: npt.ArrayLike, y: npt.ArrayLike, plot: bool = False) -> tuple[float, float]:
     """
     Calcula o coeficiente angular 'a' e o coeficiente linear 'b' de uma regressão linear simples (y = ax + b).
 
@@ -36,6 +39,10 @@ def regressao_linear(x, y, plot=False):
     ------------
     - É necessário ter a biblioteca `numpy` (importada como `np`).
     """
+    # Converte as entradas para arrays numpy para garantir que o resto do código opere de forma consistente.
+    x = np.asarray(x)
+    y = np.asarray(y)
+
   # Verificando se os dados podem satisfazer as equações da regressão linear.
     if len(x) != len(y):
         raise ValueError("X e y devem ter o mesmo número de amostras.")
@@ -88,7 +95,7 @@ def regressao_linear(x, y, plot=False):
 
 # Regressão logarítimica.
 # ----------------------------------------------------------------------
-def regressao_logaritmica(x, y, plot=False):
+def regressao_logaritmica(x: npt.ArrayLike, y: npt.ArrayLike, plot: bool = False) -> tuple[float, float]:
     """
     Calcula os coeficientes 'a' e 'b' de uma regressão logarítmica do tipo (y = a * ln(x) + b), e 
     optacionalmente, plota a função de regressão.
@@ -124,6 +131,9 @@ def regressao_logaritmica(x, y, plot=False):
         Pode ser levantado pelo `numpy` se 'x' contiver valores
         menores ou iguais a zero, resultando em 'NaN' ou '-inf'.
     """
+    # Converte as entradas para arrays numpy para garantir que o resto do código opere de forma consistente.
+    x = np.asarray(x)
+    y = np.asarray(y)
 
     # Verifica se algum x é negativo, pois log(negativo) é indefinido e dará erro.
     if np.any(x <= 0):
@@ -163,7 +173,7 @@ def regressao_logaritmica(x, y, plot=False):
         plt.xlabel("Eixo X")
         plt.ylabel("Eixo Y")
         plt.legend()
-        plt.grid(False) # Grade quadriculada.
+        plt.grid(True) # Grade quadriculada.
 
         # Plot.
         plt.show()
@@ -172,7 +182,7 @@ def regressao_logaritmica(x, y, plot=False):
 
 # Polinômio de Taylor.
 # ----------------------------------------------------------------------
-def polinomio_de_taylor(function, x_symbol, point, times, plot=False):
+def polinomio_de_taylor(function: sp.Expr, x_symbol: sp.Symbol, point: float, times: int, plot: bool = False)-> sp.Expr:
     """
     Calcula, imprime e opcionalmente plota o Polinômio de Taylor
     para uma dada função em torno de um ponto.
@@ -184,11 +194,11 @@ def polinomio_de_taylor(function, x_symbol, point, times, plot=False):
 
     Parâmetros:
     ----------
-    function: A expressão simbólica da função que será aproximada.
+    function (sp.Expr): A expressão simbólica da função que será aproximada.
 
-    x_symbol: O símbolO em relação ao qual o polinômio será construído e as derivadas calculadas.
+    x_symbol (sp.Symbol): O símbolO em relação ao qual o polinômio será construído e as derivadas calculadas.
 
-    point (float ou int): O ponto de expansão 'a' (o centro) em torno do qual a função será aproximada.
+    point (float): O ponto de expansão 'a' (o centro) em torno do qual a função será aproximada. IMPORTANTE: Ponto será do eixo x.
 
     times (int): O número de termos a serem usados na série. O polinômio resultante terá grau 'times - 1'.
 
@@ -281,4 +291,6 @@ def polinomio_de_taylor(function, x_symbol, point, times, plot=False):
 
         # Plot.
         plt.show()
-# ----------------------------------------------------------------------
+
+    return f_poly
+# ---------------------------------------------------------------------
