@@ -15,9 +15,8 @@ def erro_absoluto(valor_real,valor_aprox):
     return abs(erro_absoluto)
 
 def erro_relativo(valor_real,valor_aprox):
-    '''Função que calcula o erro relativo, que corresponde 
-    à diferença entre o valor real e o valor aproximado em 
-    comparação com a magnitude do valor real.
+    '''Função que calcula o erro relativo, que corresponde à diferença entre o 
+    valor real e o valor aproximado em comparação com a magnitude do valor real.
     
     Args:
     valor_real: valor exato
@@ -30,9 +29,3 @@ def erro_relativo(valor_real,valor_aprox):
     if abs(valor_real-valor_aprox)%valor_real!=0:  # arredonda a divisão não exata
         erro_relativo = round(erro_relativo, 5)    # para 5 casas decimais
     return abs(erro_relativo)
-
-
-valor_real=Decimal(input())
-valor_aprox=Decimal(input())
-print(erro_absoluto(valor_real, valor_aprox))
-print(erro_relativo(valor_real, valor_aprox))
