@@ -1,5 +1,6 @@
 import numpy as np
 import sympy as sp
+import matplotlib as plt
 
 def newton_raphson(function, guess, tolerance):
     """
