@@ -1,5 +1,3 @@
-from decimal import Decimal
-
 def erro_absoluto(valor_real,valor_aprox):
     """Função que calcula o erro absoluto, que corresponde 
     à diferença entre o valor real e o valor aproximado.
@@ -25,7 +23,9 @@ def erro_relativo(valor_real,valor_aprox):
     Returns:
     Retorna o valor do erro aproximado.
     '''
+    if valor_real == 0:
+        # Retorna 'infinito' se o valor real é 0, pois o erro é indefinido/infinito
+        return float('inf')
+    
     erro_relativo=abs(valor_real-valor_aprox)/valor_real
-    if abs(valor_real-valor_aprox)%valor_real!=0:  # arredonda a divisão não exata
-        erro_relativo = round(erro_relativo, 5)    # para 5 casas decimais
     return abs(erro_relativo)
