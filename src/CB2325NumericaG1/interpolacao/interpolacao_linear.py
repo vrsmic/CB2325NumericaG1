@@ -68,10 +68,18 @@ def lin_interp(x: list, y: list) -> Callable:
 
     # Definição da função de interpolação
     def f(x1: float) -> float:
-        if x1 < x[0]:
-            return y[0]
-        elif x1 > x[-1]:
-            return y[-1]
+        if x1 < x[0]: # Caso fora do intervalo, continua a reta mais próxima
+            a = (y[1] - y[0])/(x[1] - x[0])
+            b = y[0]
+                    
+            y1 = b + (x1 - x[0]) * a 
+            return y1
+        elif x1 > x[-1]: # Caso fora do intervalo, continua a reta mais próxima
+            a = (y[-1] - y[-2])/(x[-1] - x[-2])
+            b = y[-2]
+                    
+            y1 = b + (x1 - x[-2]) * a
+            return y1
         else:
             for i in range (1, len(x)): # Busca intervalo do número x1 para atribuir valor f(x1)
                 if x[i] >= x1 >= x[i-1]:
