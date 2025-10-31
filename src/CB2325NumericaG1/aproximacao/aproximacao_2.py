@@ -3,6 +3,30 @@ import matplotlib.pyplot as pltwd
 from typing import List, Tuple
 
 def ajuste_linear(x: List[float], y: List[float], plot: bool = False) -> Tuple[float, float]:
+    '''
+    Calcula o ajuste linear (regressão linear) de um conjunto de pontos
+    (x, y) usando o método dos mínimos quadrados.
+
+    Encontra os coeficientes 'a' e 'b' para a reta y = ax + b.
+
+    Parâmetros :
+
+    x : Lista ou array de valores para o eixo x.
+
+    y : Lista ou array de valores para o eixo y.
+
+    plot : Se True, plota o gráfico com os pontos
+           originais e a reta ajustada. Padrão é False.
+
+    Retorna :
+    - Uma tupla (a, b) contendo os coeficientes da reta
+      (coeficiente angular 'a' e intercepto 'b').
+
+    Observações :
+    - x e y devem ter o mesmo número de elementos.
+    - O gráfico gerado (com plot=True) compara visualmente os pontos reais
+      (em vermelho) com a função linear ajustada (em azul).
+    '''
 
     # Converter para arrays numpy
     x_arr = np.array(x)
@@ -59,3 +83,5 @@ def ajuste_linear(x: List[float], y: List[float], plot: bool = False) -> Tuple[f
         plt.legend()
         plt.grid(True) # Adiciona um grid para facilitar a leitura
         plt.show()
+
+    return (a, b)
