@@ -1,1 +1,1 @@
-from .erros_f import erro_numerico
+from .erros import erro_absoluto, erro_relativo
