@@ -3,14 +3,17 @@ import sympy as sp
 import matplotlib as plt
 
 def newton_raphson(function, guess, tolerance):
+    
     """
     Encontra uma raiz de uma função real usando o método de Newton–Raphson.
     
-    Parâmetros
     ----------
+
+    Parâmetros
+    
     function : callable ou sympy
         Função cuja raíz queremos encontrar ou aproximar. Deve ser uma função real de variável real,
-        ou seja, aceita um único argumento x (float).
+        ou seja, aceita um único argumento (float).
         Pode ser:
          - um callable Python (por exemplo, lambda x: x**2 - 2) que usa operações com floats/numpy, ou
          - uma expressão SymPy (por exemplo, sp.sympify("x**2 - 2")) ou sp.Lambda.
@@ -19,18 +22,24 @@ def newton_raphson(function, guess, tolerance):
     tolerance : float
         Critério de parada. O algoritmo para quando |f(x)| < tolerance ou |dx| < tolerance.
     
+    ----------
+    
     Retorna
-    -------
+    
     uma aproximação da raiz.
     
     um plot do método.
     
-    Levanta
-    ------
+    ----------
+
+    Possíveis mensagens de erro
+    
     ZeroDivisionError se a derivada (praticamente) zerar durante a iteração.
     ValueError se a função produzir NaN/Inf no chute.
     RuntimeError se não convergir dentro de um número máximo de 1000 iterações.
+
     """
+
     MAX_ITERS = 1000
     x0 = float(guess)
     
