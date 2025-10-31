@@ -8,8 +8,9 @@ def newton_raphson(function, guess, tolerance):
     
     Parâmetros
     ----------
-    function : callable ou sympy.Expr/sympy.Lambda
-        Função cujo zero queremos encontrar. Deve aceitar um único argumento x (float).
+    function : callable ou sympy
+        Função cuja raíz queremos encontrar ou aproximar. Deve ser uma função real de variável real,
+        ou seja, aceita um único argumento x (float).
         Pode ser:
          - um callable Python (por exemplo, lambda x: x**2 - 2) que usa operações com floats/numpy, ou
          - uma expressão SymPy (por exemplo, sp.sympify("x**2 - 2")) ou sp.Lambda.
@@ -20,20 +21,21 @@ def newton_raphson(function, guess, tolerance):
     
     Retorna
     -------
-    float
-        Aproximação da raiz.
+    uma aproximação da raiz.
+    
+    um plot do método.
     
     Levanta
     ------
-    ZeroDivisionError se a derivada for (praticamente) zero durante a iteração.
+    ZeroDivisionError se a derivada (praticamente) zerar durante a iteração.
     ValueError se a função produzir NaN/Inf no chute.
-    RuntimeError se não convergir dentro de um número máximo de iterações.
+    RuntimeError se não convergir dentro de um número máximo de 1000 iterações.
     """
     MAX_ITERS = 1000
     x0 = float(guess)
     
-    # Preparar f e df: se function for simbólica, obtenha derivada simbólica;
-    # caso contrário, use derivada numérica por diferença central.
+    # Preparar f e df: se function for sympy, obtenha a derivada analítca;
+    # caso contrário, use derivada numérica por quociente de newton.
     if isinstance(function, sp.Basic):  # cobre sp.Expr, sp.Symbol, etc.
         if isinstance(function, sp.Lambda):
             f_expr = function.expr
@@ -42,9 +44,9 @@ def newton_raphson(function, guess, tolerance):
             f_expr = function
             variables = function.free_symbols
 
-        # Garante que é uma função de UMA variável
+        # Garante que é uma função de uma variável
         if len(variables) == 0:
-            # É uma constante, ex: sp.sympify("5")
+            # Caso constante
             f = lambda x: float(f_expr)
             df = lambda x: 0.0
         elif len(variables) == 1:
