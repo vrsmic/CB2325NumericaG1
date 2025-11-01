@@ -42,6 +42,8 @@ def newton_raphson(function, guess, tolerance):
 
     MAX_ITERS = 1000
     x0 = float(guess)
+    x_record = [x0]
+
     
     # Preparar f e df: se function for sympy, obtenha a derivada analítca;
     # caso contrário, use derivada numérica por quociente de newton.
@@ -78,22 +80,27 @@ def newton_raphson(function, guess, tolerance):
     else:
         raise TypeError("function deve ser um callable (ex: lambda) ou uma expressão SymPy (Expr ou Lambda).")
     
+    root = None
     for i in range(MAX_ITERS):
         fx = float(f(x0))
         if np.isnan(fx) or np.isinf(fx):
             raise ValueError(f"f(x) retornou {fx} no ponto x = {x0}.")
         # critério pelo valor da função
         if abs(fx) < tolerance:
-            return x0
+            root = x0
+            break
         dfx = float(df(x0))
         if np.isnan(dfx) or np.isinf(dfx):
             raise ValueError(f"f'(x) retornou {dfx} no ponto x = {x0}.")
         if abs(dfx) < 1e-16:
             raise ZeroDivisionError(f"Derivada muito próxima de zero em x = {x0}.")
         x1 = x0 - fx / dfx
+        x_record.append(x1)
         # critério pelo passo
         if abs(x1 - x0) < tolerance:
-            return x1
+            root = x1
+            break
         x0 = x1
     
-    raise RuntimeError(f"Não convergiu após {MAX_ITERS} iterações. Último x = {x0}, f(x) = {fx}")
+    if root is None:
+        raise RuntimeError(f"Não convergiu após {MAX_ITERS} iterações. Último x = {x0}, f(x) = {fx}")
