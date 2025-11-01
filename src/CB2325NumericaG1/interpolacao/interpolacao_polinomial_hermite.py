@@ -1,5 +1,22 @@
 import numpy as np
 def hermite_interp(x_pontos: list, y_pontos: list, dy_pontos: list, allow_extrapolation: bool = False) -> object | None:
+    """
+    Cria uma função de interpolação polinomial de Hermite.
+    
+    Retorna uma função (do tipo 'object' para fins de anotação) 
+    ou None se der erro.
+
+    Args:
+        x_pontos: Coordenadas x (n valores).
+        y_pontos: Coordenadas y (n valores).
+        dy_pontos: Derivadas dy/dx em cada x (n valores).
+        allow_extrapolation: Se False (padrão), levanta um ValueError 
+                                 para valores de x fora do intervalo de dados.
+
+    Raises:
+        ValueError: Se `allow_extrapolation` for False e `x_novo`
+                    estiver fora do intervalo [min(x_pontos), max(x_pontos)].
+    """
     try:
         x_pts = np.asarray(x_pontos, dtype=float)
         y_pts = np.asarray(y_pontos, dtype=float)
@@ -41,7 +58,9 @@ def hermite_interp(x_pontos: list, y_pontos: list, dy_pontos: list, allow_extrap
         return None
 
     def polinomio_interpolador_hermite(x_novo: float | np.ndarray) -> float | np.ndarray:
-       
+        """
+        Avalia o polinômio P(x_novo) = sum(c_j * x_novo^j)
+        """
         x_val = np.asarray(x_novo, dtype=float)
         
         if not allow_extrapolation:
