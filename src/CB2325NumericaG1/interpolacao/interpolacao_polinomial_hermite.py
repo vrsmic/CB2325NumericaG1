@@ -16,6 +16,11 @@ def hermite_interp(x_pontos: list, y_pontos: list, dy_pontos: list, allow_extrap
     Raises:
         ValueError: Se `allow_extrapolation` for False e `x_novo`
                     estiver fora do intervalo [min(x_pontos), max(x_pontos)].
+    Notas:
+        Sobre a Extrapolação:
+        Por padrão, esta biblioteca não permite extrapolação (allow_extrapolation=False).
+        Isso evita que o polinômio seja avaliado em regiões onde ele
+        tende a crescer rapidamente e perder precisão numérica.
     """
     try:
         x_pts = np.asarray(x_pontos, dtype=float)
