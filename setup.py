@@ -12,7 +12,7 @@ setup(
         #MAJOR eh que vai mudar muita coisa, e vai gerar incompatibilidade com algum código antigo
         #MINOR eh implementacao de feature nova, não gera imcompatibilidade
         #PATCH eh correcao de bug
-    version="0.1.7",
+    version="0.2.0",
     
     #informacoes sobre a biblioteca
     #esses campos sao opcionais, ai cada um bota seu nome e email (se quiser)
@@ -31,7 +31,11 @@ setup(
     
     #dependencia que utilizamos. se vc usar alguma dependencia, coloca nessa lista
     install_requires=[
-        # "numpy>=1.20.0", #se algm for usar numpy
+        "numpy>=1.20.0", #se algm for usar numpy
+        "matplotlib",
+        "typing", 
+        "sympy",
+        "setuptools"
     ],
     
     #requerimentos da versao do python

@@ -17,6 +17,7 @@ def newton_raphson(function, guess, tolerance):
         Pode ser:
          - um callable Python (por exemplo, lambda x: x**2 - 2) que usa operações com floats/numpy, ou
          - uma expressão SymPy (por exemplo, sp.sympify("x**2 - 2")) ou sp.Lambda.
+        ***IMPORTANTE: para melhor eficiência do método, prefira usar funções sympy!!!
     guess : float
         Chute inicial x0.
     tolerance : float
@@ -42,7 +43,8 @@ def newton_raphson(function, guess, tolerance):
 
     MAX_ITERS = 1000
     x0 = float(guess)
-    
+    x_record = [x0]
+
     # Preparar f e df: se function for sympy, obtenha a derivada analítca;
     # caso contrário, use derivada numérica por quociente de newton.
     if isinstance(function, sp.Basic):  # cobre sp.Expr, sp.Symbol, etc.
@@ -66,8 +68,7 @@ def newton_raphson(function, guess, tolerance):
             df = sp.lambdify(x_sym, df_expr, 'numpy')
         else:
             raise ValueError(f"A expressão SymPy deve ter exatamente uma variável, mas foram encontradas {len(variables)}: {variables}")
-    
-
+        
     elif callable(function):
         f = function
         def df(x):
@@ -78,22 +79,70 @@ def newton_raphson(function, guess, tolerance):
     else:
         raise TypeError("function deve ser um callable (ex: lambda) ou uma expressão SymPy (Expr ou Lambda).")
     
+    root = None
     for i in range(MAX_ITERS):
         fx = float(f(x0))
         if np.isnan(fx) or np.isinf(fx):
             raise ValueError(f"f(x) retornou {fx} no ponto x = {x0}.")
         # critério pelo valor da função
         if abs(fx) < tolerance:
-            return x0
+            root = x0
+            break
         dfx = float(df(x0))
         if np.isnan(dfx) or np.isinf(dfx):
             raise ValueError(f"f'(x) retornou {dfx} no ponto x = {x0}.")
         if abs(dfx) < 1e-16:
             raise ZeroDivisionError(f"Derivada muito próxima de zero em x = {x0}.")
         x1 = x0 - fx / dfx
+        x_record.append(x1)
         # critério pelo passo
         if abs(x1 - x0) < tolerance:
-            return x1
+            root = x1
+            break
         x0 = x1
     
-    raise RuntimeError(f"Não convergiu após {MAX_ITERS} iterações. Último x = {x0}, f(x) = {fx}")
+    if root is None:
+        raise RuntimeError(f"Não convergiu após {MAX_ITERS} iterações. Último x = {x0}, f(x) = {fx}")
+    
+    # Visualização gráfica
+    if len(x_record) > 1:
+        x_min = min(x_record)
+        x_max = max(x_record)
+        delta = (x_max - x_min) * 0.1 if x_max > x_min else 1.0
+        x_min -= delta
+        x_max += delta
+    else:
+        x_min = x_record[0] - 1.0
+        x_max = x_record[0] + 1.0
+    
+    x = np.linspace(x_min, x_max, 100)
+    y = f(x)
+    
+    # Plota a função original em preto.
+    plt.plot(x, y, color='black', linewidth=1, label='f(x)')
+    
+    # Plota os pontos de iteração
+    x_points_y = f(np.array(x_record))
+    plt.plot(x_record, x_points_y, 'ro', label='Pontos de Iteração')
+    
+    # Plota os segmentos de reta tangente pontilhados
+    for j in range(len(x_record) - 1):
+        x_i = x_record[j]
+        y_i = float(f(x_i))
+        x_next = x_record[j + 1]
+        x_tang = np.array([x_i, x_next])
+        y_tang = df(x_i) * (x_tang - x_i) + y_i
+        plt.plot(x_tang, y_tang, 'b--', label='Tangente' if j == 0 else None)
+    
+    # Plota o eixo x.
+    plt.axhline(0, color='black', linewidth=1)
+    
+    # Configuração do gráfico
+    plt.axis('equal')
+    plt.title("Raízes da função pelo Método de Newton-Raphson")
+    plt.xlabel("x")
+    plt.ylabel("f(x)")
+    plt.legend()
+    plt.show()
+    
+    return round(root, 4)

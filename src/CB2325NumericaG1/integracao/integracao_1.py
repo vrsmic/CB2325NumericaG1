@@ -1,8 +1,10 @@
 
 import numpy as np
 import matplotlib.pyplot as plt
+from typing import Callable
 
-def trapezio(f : callable[[float], float] , inicio : float, final : float, n : int, plot : bool = False) -> float :
+
+def trapezio(f : Callable[[float], float] , inicio : float, final : float, n : int, plot : bool = False) -> float :
 
     '''
     Calcula a integral aproximada de uma função usando o método 
@@ -23,16 +25,18 @@ def trapezio(f : callable[[float], float] , inicio : float, final : float, n : i
     plot : Fazer plot do gráfico da integração. 
 
     -----------
-
     Retorna : 
-    - Valor aproximado da integral, arredondado
-        para 4 casas decimais.
-    
+    - (float) : Valor aproximado da integral, arredondado para 4 casas decimais.
+    -----------
+
+    Dependências :
+    - É necessário ter a biblioteca `numpy` (importada como `np`).
+    - É necessário ter a biblioteca `matplotlib` (importado o módulo pyplot com `sp`).
+
     -----------
 
     Observações : 
-    - A função plota o gráfico com os trapézios da aproximação em azul.
-    - Junto com o gráfico da função original eme vermelho.
+    - A função plota o gráfico com os trapézios da aproximação em azul, Junto com o gráfico da função original em vermelho.
 
     '''
 
@@ -77,10 +81,10 @@ def trapezio(f : callable[[float], float] , inicio : float, final : float, n : i
     return round(integral_total, 4)
 
 
-def simpson13(f : callable[[float], float] , inicio : float, final : float, n : int, plot : bool = False) -> float :
+def simpson13(f : Callable[[float], float] , inicio : float, final : float, n : int, plot : bool = False) -> float :
     '''
-    Calcula a integral aproximada de uma função usando o método 
-    de simpson 1/3 e plota as parábolas.
+    Calcula a integral aproximada de uma função utilizando o método 
+    de simpson 1/3 e plota o gráfico da aproximação.
 
     ------------
 
@@ -99,14 +103,23 @@ def simpson13(f : callable[[float], float] , inicio : float, final : float, n : 
     -----------
 
     Retorna : 
-    - Valor aproximado da integral, arredondado
-        para 4 casas decimais.
+    - (float) Valor aproximado da integral, arredondado para 4 casas decimais.
     
     -----------
 
+    Dependências :
+    - É necessário ter a biblioteca `numpy` (importada como `np`).
+    - É necessário ter a biblioteca `matplotlib` (importado o módulo pyplot com `sp`).
+
+    -----------
+
+    Levanta :
+    
+    ValueError: Se `n` não é par.
+    -----------
+
     Observações : 
-    - A função plota o gráfico com as parábolas da aproximação em azul.
-    - Junto com o gráfico da função.
+    - A função plota o gráfico com as parábolas da aproximação em azul, Junto com o gráfico da função.
 
     '''
 
@@ -131,7 +144,7 @@ def simpson13(f : callable[[float], float] , inicio : float, final : float, n : 
             coef = np.polyfit(xi, yi, 2)
             xs = np.linspace(xi[0], xi[-1], 50)
             ys = np.polyval(coef, xs)
-            plt.fill_between(xs, ys, color='blue', edgecolor='black', alpha=0.7)
+            plt.fill_between(xs, ys, color='blue', alpha=0.7)
 
 
         # Plota a função original em vermelho.    
