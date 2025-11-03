@@ -1,7 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from typing import Callable
         
-def bissecao(function, lower, upper, tolerance):
+def bissecao(function: Callable, lower: float, upper: float, tolerance: float) -> float:
 
     '''
     Calcula a raiz aproximada de uma função usando o método da bisseção.
@@ -35,9 +36,15 @@ def bissecao(function, lower, upper, tolerance):
     # Avalia a função nos pontos limites do intervalo
     lower_bound = function(lower)
     upper_bound = function(upper)
-
+        
+    # Verifica se um dos limites do intervalo é raiz
+    if lower_bound == 0:
+        return round(lower_bound, 4)
+    elif upper_bound == 0:
+        return round(upper_bound, 4)
+            
     # Verifica se a função cumpre as condições para a utilização desse método
-    if lower_bound * upper_bound < 0:
+    if lower_bound * upper_bound > 0:
         raise ValueError("A função não tem sinais opostos nos limites do intervalo.")
     
     while upper-lower > tolerance:
@@ -87,20 +94,3 @@ def bissecao(function, lower, upper, tolerance):
     # Quando o loop para, a função retorna a melhor estimativa, isto é, o ponto médio do último intervalo
     final_root = (lower + upper) / 2
     return round(final_root, 4)
-
-
-def newton_raphson(function, lower, upper, tolerance):
-    pass
-
-def secante(function, lower, upper, tolerance):
-    pass
-
-def raiz(function, lower, upper, tolerance, method='bissecao' ):
-
-    if method == 'bissecao':
-       return bissecao(function, lower, upper, tolerance)
-        
-    elif method == 'secante':
-       return secante(function, lower, upper, tolerance)
-    else:
-      return  newton_raphson(function, lower, upper, tolerance)
