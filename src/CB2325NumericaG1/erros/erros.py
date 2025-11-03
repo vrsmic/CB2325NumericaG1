@@ -1,4 +1,4 @@
-def erro_absoluto(valor_real,valor_aprox):
+def erro_absoluto(valor_real: float,valor_aprox: float) -> float:
     """Função que calcula o erro absoluto, que corresponde 
     à diferença entre o valor real e o valor aproximado.
     
@@ -12,7 +12,7 @@ def erro_absoluto(valor_real,valor_aprox):
     erro_absoluto=valor_real-valor_aprox
     return abs(erro_absoluto)
 
-def erro_relativo(valor_real,valor_aprox):
+def erro_relativo(valor_real: float, valor_aprox: float) -> float:
     '''Função que calcula o erro relativo, que corresponde à diferença entre o 
     valor real e o valor aproximado em comparação com a magnitude do valor real.
     
