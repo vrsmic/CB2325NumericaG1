@@ -44,7 +44,6 @@ def newton_raphson(function, guess, tolerance):
     x0 = float(guess)
     x_record = [x0]
 
-    
     # Preparar f e df: se function for sympy, obtenha a derivada analítca;
     # caso contrário, use derivada numérica por quociente de newton.
     if isinstance(function, sp.Basic):  # cobre sp.Expr, sp.Symbol, etc.
@@ -68,8 +67,7 @@ def newton_raphson(function, guess, tolerance):
             df = sp.lambdify(x_sym, df_expr, 'numpy')
         else:
             raise ValueError(f"A expressão SymPy deve ter exatamente uma variável, mas foram encontradas {len(variables)}: {variables}")
-    
-
+        
     elif callable(function):
         f = function
         def df(x):
@@ -104,3 +102,46 @@ def newton_raphson(function, guess, tolerance):
     
     if root is None:
         raise RuntimeError(f"Não convergiu após {MAX_ITERS} iterações. Último x = {x0}, f(x) = {fx}")
+    
+    # Visualização gráfica
+    if len(x_record) > 1:
+        x_min = min(x_record)
+        x_max = max(x_record)
+        delta = (x_max - x_min) * 0.1 if x_max > x_min else 1.0
+        x_min -= delta
+        x_max += delta
+    else:
+        x_min = x_record[0] - 1.0
+        x_max = x_record[0] + 1.0
+    
+    x = np.linspace(x_min, x_max, 100)
+    y = f(x)
+    
+    # Plota a função original em preto.
+    plt.plot(x, y, color='black', linewidth=1, label='f(x)')
+    
+    # Plota os pontos de iteração
+    x_points_y = f(np.array(x_record))
+    plt.plot(x_record, x_points_y, 'ro', label='Pontos de Iteração')
+    
+    # Plota os segmentos de reta tangente pontilhados
+    for j in range(len(x_record) - 1):
+        x_i = x_record[j]
+        y_i = float(f(x_i))
+        x_next = x_record[j + 1]
+        x_tang = np.array([x_i, x_next])
+        y_tang = df(x_i) * (x_tang - x_i) + y_i
+        plt.plot(x_tang, y_tang, 'b--', label='Tangente' if j == 0 else None)
+    
+    # Plota o eixo x.
+    plt.axhline(0, color='black', linewidth=1)
+    
+    # Configuração do gráfico
+    plt.axis('equal')
+    plt.title("Raízes da função pelo Método de Newton-Raphson")
+    plt.xlabel("x")
+    plt.ylabel("f(x)")
+    plt.legend()
+    plt.show()
+    
+    return round(root, 4)
