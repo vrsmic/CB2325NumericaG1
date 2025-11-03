@@ -62,20 +62,22 @@ def bissecao(function, lower, upper, tolerance):
     x = np.linspace(lower_record[0], upper_record[0], 100)
     y = function(x)
 
-    # Plota a função original em preto.    
-    plt.plot(x, y, color = 'black', linewidth = 1, label = 'f(x)') 
+    # Plota o eixo x.
+    plt.axhline(0, color='dimgrey', linewidth=1.5)
+    
+    # Plota a função original em preto.
+    plt.plot(x, y, color = 'black', linewidth = 1.0, label = 'f(x)') 
 
     lower_points_y = function(np.array(lower_record))
     upper_points_y = function(np.array(upper_record))
 
-    plt.plot(lower_record, lower_points_y, 'r>', label='Limite Inferior')
-    plt.plot(upper_record, upper_points_y, 'b<', label='Limite Superior')
+    plt.scatter(lower_record, lower_points_y, s=20.0, c='royalblue', label='Limite Inferior', zorder=2)
+    plt.xlim(lower_record[0], upper_record[0])
+    plt.scatter(upper_record, upper_points_y,s=20.0, c='crimson', label='Limite Superior', zorder=2)
 
-    # Plota o eixo x.
-    plt.axhline(0, color='black', linewidth=1)
 
     # Configuração do gráfico
-    plt.axis('equal')
+    # plt.axis('equal')
     plt.title("Raízes da função pelo Método da Bisseção")
     plt.xlabel("x")
     plt.ylabel("f(x)")
