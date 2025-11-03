@@ -1,5 +1,5 @@
 import numpy as np
-import matplotlib.pyplot as pltwd
+import matplotlib.pyplot as plt
 from typing import List, Tuple
 
 def ajuste_linear(x: List[float], y: List[float], plot: bool = False) -> Tuple[float, float]:
