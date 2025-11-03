@@ -31,7 +31,11 @@ setup(
     
     #dependencia que utilizamos. se vc usar alguma dependencia, coloca nessa lista
     install_requires=[
-        # "numpy>=1.20.0", #se algm for usar numpy
+        "numpy>=1.20.0", #se algm for usar numpy
+        "matplotlib",
+        "typing", 
+        "sympy",
+        "setuptools"
     ],
     
     #requerimentos da versao do python
