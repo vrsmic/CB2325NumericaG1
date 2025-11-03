@@ -94,3 +94,5 @@ def bissecao(function: Callable, lower: float, upper: float, tolerance: float) -
     # Quando o loop para, a função retorna a melhor estimativa, isto é, o ponto médio do último intervalo
     final_root = (lower + upper) / 2
     return round(final_root, 4)
+
+# teste de commit
