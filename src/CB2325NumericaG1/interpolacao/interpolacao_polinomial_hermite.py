@@ -1,12 +1,15 @@
+import matplotlib.pyplot as plt
 import numpy as np
+from typing import Callable
+
 def hermite_interp(x_pontos: list, y_pontos: list, dy_pontos: list, allow_extrapolation: bool = False) -> object | None:
     """
     Cria uma função de interpolação polinomial de Hermite.
     
-    Retorna uma função (do tipo 'object' para fins de anotação) 
-    ou None se der erro.
+    Retorna:
+        Uma função do tipo 'object' para fins de anotação ou None se der erro.
 
-    Args:
+    Parâmetros:
         x_pontos: Coordenadas x (n valores).
         y_pontos: Coordenadas y (n valores).
         dy_pontos: Derivadas dy/dx em cada x (n valores).
@@ -79,3 +82,124 @@ def hermite_interp(x_pontos: list, y_pontos: list, dy_pontos: list, allow_extrap
         return np.polyval(coefs[::-1], x_val)
     
     return polinomio_interpolador_hermite
+
+def _ordenar_coordenadas_hermite(x: list, y: list, dy: list) -> tuple:
+    """
+    Ordena as coordenadas mantendo 'pareamento' para Hermite.
+
+    Parâmetros:
+    x: lista das coordenadas x, em x[i], de cada ponto i.
+    y: lista das coordenadas y, em y[i], de cada ponto i.
+    dy: lista das derivadas dy[i] em cada ponto i.
+
+    Retorna:
+    x_ord: lista das coordenadas x em ordem crescente.
+    y_ord: lista das coordenadas y, pareadas com as coordenadas x.
+    dy_ord: lista das derivadas, pareadas com as coordenadas x.
+    """
+    x_np = np.array(x)
+    y_np = np.array(y)
+    dy_np = np.array(dy)
+
+    idx = np.argsort(x_np)
+
+    x_ord = x_np[idx]
+    y_ord = y_np[idx]
+    dy_ord = dy_np[idx]
+
+    return x_ord, y_ord, dy_ord
+
+def _plotar_hermite(x: list, y: list, dy: list, f: Callable, titulo: str = "Interpolação de Hermite"):
+    """
+    Plotagem de pontos, derivadas e da função de interpolação.
+
+    Parâmetros:
+    x: lista das coordenadas x, em x[i], de cada ponto i.
+    y: lista das coordenadas y, em y[i], de cada ponto i.
+    dy: lista das derivadas dy[i] em cada ponto i.
+    f: função de interpolação que será plotada.
+    titulo: título do gráfico.
+
+    Retorna:
+    None
+    """
+    #criar pontos para a curva suave
+    x_min, x_max = min(x), max(x)
+    x_curve = np.linspace(x_min, x_max, 500)
+    y_curve = f(x_curve)
+    
+    #calcular as retas tangentes nos pontos de interpolação
+    comprimento_tangente = 0.1 * (x_max - x_min)  # 10% do intervalo
+    
+    fig, ax = plt.subplots(figsize=(10, 6))
+    
+    #gráfico principal
+    ax.scatter(x, y, color='red', s=50, zorder=5, label='Pontos de dados')
+    ax.plot(x_curve, y_curve, 'b-', linewidth=2, label='Polinômio de Hermite')
+    
+    #adc retas tangentes
+    tangente_plotted = False
+    for xi, yi, dyi in zip(x, y, dy):
+        x_tang = [xi - comprimento_tangente, xi + comprimento_tangente]
+        y_tang = [yi - comprimento_tangente * dyi, yi + comprimento_tangente * dyi]
+        label = 'Tangente' if not tangente_plotted else ""
+        ax.plot(x_tang, y_tang, 'g--', alpha=0.7, linewidth=1, label=label)
+        if not tangente_plotted:
+            tangente_plotted = True
+        ax.plot(xi, yi, 'ro', markersize=8)
+    
+    ax.set_xlabel('x')
+    ax.set_ylabel('y')
+    ax.set_title(titulo)
+    ax.grid(True, alpha=0.3)
+    ax.legend()
+    
+    plt.tight_layout()
+    plt.show()
+
+def hermite_interp_com_plot(x_pontos: list, y_pontos: list, dy_pontos: list, 
+                           allow_extrapolation: bool = False, 
+                           titulo: str = "Interpolação de Hermite") -> Callable:
+    """
+    Cria e plota uma função de interpolação polinomial de Hermite.
+
+    Args:
+        x_pontos: Coordenadas x (n valores).
+        y_pontos: Coordenadas y (n valores).
+        dy_pontos: Derivadas dy/dx em cada x (n valores).
+        allow_extrapolation: Se permite extrapolação.
+        titulo: Título para o gráfico.
+
+    Returns:
+        Função de interpolação de Hermite.
+    """
+    #ordenar coordenadas
+    x_ord, y_ord, dy_ord = _ordenar_coordenadas_hermite(x_pontos, y_pontos, dy_pontos)
+    
+    #criar função de interpolação - p plotagem, permitimos extrapolação
+    #p poder calcular derivadas numéricas nas bordas
+    f_interp = hermite_interp(x_ord, y_ord, dy_ord, allow_extrapolation=True)
+    
+    if f_interp is None:
+        print("Erro: Não foi possível criar a função de interpolação.")
+        return None
+    
+    #plot
+    _plotar_hermite(x_ord, y_ord, dy_ord, f_interp, titulo)
+
+    #se o usuário não quiser extrapolação, cria outra versão restrita
+    if not allow_extrapolation:
+        def f_interp_restrita(x):
+            x_val = np.asarray(x, dtype=float)
+            x_min, x_max = min(x_ord), max(x_ord)
+            
+            if np.any((x_val < x_min) | (x_val > x_max)):
+                raise ValueError(
+                    f"Valores fora do intervalo [{x_min}, {x_max}]. "
+                    "Use allow_extrapolation=True para forçar o cálculo."
+                )
+            return f_interp(x_val)
+        
+        return f_interp_restrita
+    
+    return f_interp
