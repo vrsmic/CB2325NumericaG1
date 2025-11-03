@@ -17,6 +17,7 @@ def newton_raphson(function, guess, tolerance):
         Pode ser:
          - um callable Python (por exemplo, lambda x: x**2 - 2) que usa operações com floats/numpy, ou
          - uma expressão SymPy (por exemplo, sp.sympify("x**2 - 2")) ou sp.Lambda.
+        ***IMPORTANTE: para melhor eficiência do método, prefira usar funções sympy!!!
     guess : float
         Chute inicial x0.
     tolerance : float
