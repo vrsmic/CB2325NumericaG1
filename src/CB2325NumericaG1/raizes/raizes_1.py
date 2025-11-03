@@ -37,7 +37,7 @@ def bissecao(function, lower, upper, tolerance):
     upper_bound = function(upper)
 
     # Verifica se a função cumpre as condições para a utilização desse método
-    if lower_bound * upper_bound >= 0:
+    if lower_bound * upper_bound < 0:
         raise ValueError("A função não tem sinais opostos nos limites do intervalo.")
     
     while upper-lower > tolerance:
