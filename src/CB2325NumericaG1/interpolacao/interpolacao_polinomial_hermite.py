@@ -6,7 +6,7 @@ def _hermite_interp_mat(x_pontos: list, y_pontos: list, dy_pontos: list, allow_e
     """
     Função interna - Cria a função matemática da interpolação.
     
-    Esta é a função  apenas resolve o sistema linear e 
+    Essa função apenas resolve o sistema linear e 
     retorna a função polinomial (Callable) que pode ser usada 
     para calcular valores.
 
