@@ -2,12 +2,13 @@ import matplotlib.pyplot as plt
 import numpy as np
 from typing import Callable
 
-def hermite_interp(x_pontos: list, y_pontos: list, dy_pontos: list, allow_extrapolation: bool = False) -> object | None:
+def _hermite_interp_mat(x_pontos: list, y_pontos: list, dy_pontos: list, allow_extrapolation: bool = False) -> Callable | None:
     """
-    Cria uma função de interpolação polinomial de Hermite.
+    Função interna - Cria a função matemática da interpolação.
     
-    Retorna:
-        Uma função do tipo 'object' para fins de anotação ou None se der erro.
+    Esta é a função  apenas resolve o sistema linear e 
+    retorna a função polinomial (Callable) que pode ser usada 
+    para calcular valores.
 
     Parâmetros:
         x_pontos: Coordenadas x (n valores).
@@ -16,14 +17,9 @@ def hermite_interp(x_pontos: list, y_pontos: list, dy_pontos: list, allow_extrap
         allow_extrapolation: Se False (padrão), levanta um ValueError 
                                  para valores de x fora do intervalo de dados.
 
-    Raises:
-        ValueError: Se `allow_extrapolation` for False e `x_novo`
-                    estiver fora do intervalo [min(x_pontos), max(x_pontos)].
-    Notas:
-        Sobre a Extrapolação:
-        Por padrão, esta biblioteca não permite extrapolação (allow_extrapolation=False).
-        Isso evita que o polinômio seja avaliado em regiões onde ele
-        tende a crescer rapidamente e perder precisão numérica.
+    Retorna:
+        Uma função (Callable) que avalia o polinômio, ou None se der erro.
+        A função retornada é que irá lidar com o `ValueError` de extrapolação. 
     """
     try:
         x_pts = np.asarray(x_pontos, dtype=float)
@@ -85,7 +81,7 @@ def hermite_interp(x_pontos: list, y_pontos: list, dy_pontos: list, allow_extrap
 
 def _ordenar_coordenadas_hermite(x: list, y: list, dy: list) -> tuple:
     """
-    Ordena as coordenadas mantendo 'pareamento' para Hermite.
+    Função interna - Ordena as coordenadas mantendo 'pareamento' para Hermite.
 
     Parâmetros:
     x: lista das coordenadas x, em x[i], de cada ponto i.
@@ -111,7 +107,7 @@ def _ordenar_coordenadas_hermite(x: list, y: list, dy: list) -> tuple:
 
 def _plotar_hermite(x: list, y: list, dy: list, f: Callable, titulo: str = "Interpolação de Hermite"):
     """
-    Plotagem de pontos, derivadas e da função de interpolação.
+    Função interna - Plotagem de pontos, derivadas e da função de interpolação.
 
     Parâmetros:
     x: lista das coordenadas x, em x[i], de cada ponto i.
@@ -157,28 +153,37 @@ def _plotar_hermite(x: list, y: list, dy: list, f: Callable, titulo: str = "Inte
     plt.tight_layout()
     plt.show()
 
-def hermite_interp_com_plot(x_pontos: list, y_pontos: list, dy_pontos: list, 
+def hermite_interp(x_pontos: list, y_pontos: list, dy_pontos: list, 
                            allow_extrapolation: bool = False, 
                            titulo: str = "Interpolação de Hermite") -> Callable:
     """
     Cria e plota uma função de interpolação polinomial de Hermite.
 
-    Args:
+    Parâmetros:
         x_pontos: Coordenadas x (n valores).
         y_pontos: Coordenadas y (n valores).
         dy_pontos: Derivadas dy/dx em cada x (n valores).
         allow_extrapolation: Se permite extrapolação.
         titulo: Título para o gráfico.
 
-    Returns:
+    Retorna:
         Função de interpolação de Hermite.
+
+    Raises:
+        ValueError: Se `allow_extrapolation` for False e `x_novo`
+                    estiver fora do intervalo [min(x_pontos), max(x_pontos)].
+    Notas:
+        Sobre a Extrapolação:
+        Por padrão, esta biblioteca não permite extrapolação (allow_extrapolation=False).
+        Isso evita que o polinômio seja avaliado em regiões onde ele
+        tende a crescer rapidamente e perder precisão numérica.
     """
     #ordenar coordenadas
     x_ord, y_ord, dy_ord = _ordenar_coordenadas_hermite(x_pontos, y_pontos, dy_pontos)
     
     #criar função de interpolação - p plotagem, permitimos extrapolação
     #p poder calcular derivadas numéricas nas bordas
-    f_interp = hermite_interp(x_ord, y_ord, dy_ord, allow_extrapolation=True)
+    f_interp = _hermite_interp_mat(x_ord, y_ord, dy_ord, allow_extrapolation=True)
     
     if f_interp is None:
         print("Erro: Não foi possível criar a função de interpolação.")
