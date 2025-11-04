@@ -4,41 +4,57 @@ import matplotlib.pyplot as plt
 from typing import Callable
 
 
-def trapezio(f : Callable[[float], float] , inicio : float, final : float, n : int, plot : bool = False) -> float :
+def trapezio(
+    f : Callable[[float], float],
+    inicio : float, 
+    final : float, 
+    n : int, 
+    plot : bool = False
+    )-> float :
 
-    '''
-    Calcula a integral aproximada de uma função usando o método 
-    trapezoidal e plota os trapézios usados na aproximação.
+    """
+    Calcula a integral aproximada de uma função usando o método trapezoidal.
 
-    ------------
+    Caso desejado, a função também plota os trapézios utilizados na aproximação
+    e o gráfico da função original.
 
-    Parâmetros :
+    Args:
+        f (Callable[[float], float]): 
+            Função a ser integrada. Deve aceitar apenas um argumento escalar `x`.
+        inicio (float): 
+            Limite inferior da integral.
+        final (float): 
+            Limite superior da integral.
+        n (int): 
+            Número de subintervalos (trapézios) utilizados na aproximação.
+        plot (bool, optional): 
+            Se `True`, exibe o gráfico da função e dos trapézios. 
+            Padrão é `False`.
 
-    f : Função a ser integrada, deve aceitar apenas um argumento x.
+    Returns:
+        float: 
+            Valor aproximado da integral, arredondado para 4 casas decimais.
 
-    inicio : Limite inferior da integral.
+    Raises:
+        ValueError: 
+            Se `n` for menor ou igual a zero.
+        TypeError:
+            Se `f` não for uma função chamável.
 
-    final : Limite superios da integral.
+    Dependencies:
+        - `numpy` (importado como `np`)
+        - `matplotlib.pyplot` (importado como `plt`)
 
-    n : Número de subintervalos (trapézios).
+    Notes:
+        - O gráfico mostra a função original em vermelho e os trapézios da 
+          aproximação em azul.
+    """
 
-    plot : Fazer plot do gráfico da integração. 
-
-    -----------
-    Retorna : 
-    - (float) : Valor aproximado da integral, arredondado para 4 casas decimais.
-    -----------
-
-    Dependências :
-    - É necessário ter a biblioteca `numpy` (importada como `np`).
-    - É necessário ter a biblioteca `matplotlib` (importado o módulo pyplot com `sp`).
-
-    -----------
-
-    Observações : 
-    - A função plota o gráfico com os trapézios da aproximação em azul, Junto com o gráfico da função original em vermelho.
-
-    '''
+    if n <= 0 :
+        raise ValueError("O número de subintervalos 'n' deve ser maior do que 0.")
+    
+    if not callable(f) :
+        raise TypeError("O argumento 'f' deve ser uma função chamável.")
 
     # Lista de pontos no intervalo [inicio, final].
     x = np.linspace(inicio, final, n+1)
@@ -81,50 +97,57 @@ def trapezio(f : Callable[[float], float] , inicio : float, final : float, n : i
     return round(integral_total, 4)
 
 
-def simpson13(f : Callable[[float], float] , inicio : float, final : float, n : int, plot : bool = False) -> float :
-    '''
-    Calcula a integral aproximada de uma função utilizando o método 
-    de simpson 1/3 e plota o gráfico da aproximação.
+def simpson13(
+    f : Callable[[float], float] ,
+    inicio : float,
+    final : float, 
+    n : int, 
+    plot : bool = False
+    ) -> float :
 
-    ------------
+    """
+    Calcula a integral aproximada de uma função utilizando o método de Simpson 1/3.
 
-    Parâmetros :
+    Caso desejado, a função também plota o gráfico da aproximação com as parábolas
+    utilizadas e a curva original da função.
 
-    f : Função a ser integrada, deve aceitar apenas um argumento x.
+    Args:
+        f (Callable[[float], float]): 
+            Função a ser integrada. Deve aceitar apenas um argumento escalar `x`.
+        inicio (float): 
+            Limite inferior da integral.
+        final (float): 
+            Limite superior da integral.
+        n (int): 
+            Número de subintervalos. Deve ser um número par.
+        plot (bool, optional): 
+            Se `True`, exibe o gráfico da função e das parábolas de aproximação. 
+            Padrão é `False`.
 
-    inicio : Limite inferior da integral.
+    Returns:
+        float: 
+            Valor aproximado da integral, arredondado para 4 casas decimais.
 
-    final : Limite superios da integral.
+    Raises:
+        TypeError: 
+            Se `f` não for uma função chamável.
+        ValueError: 
+            Se `n` não for par ou se for menor ou igual a zero.
 
-    n : Número de subintervalos.
+    Dependencies:
+        - `numpy` (importado como `np`)
+        - `matplotlib.pyplot` (importado como `plt`)
 
-    plot : Fazer plot do gráfico da integração. 
+    Notes:
+        - O gráfico mostra a função original em vermelho e as parábolas 
+          de aproximação em azul.
+    """
 
-    -----------
+    if not callable(f) :
+        raise TypeError("O argumento 'f' deve ser uma função chamável.")
 
-    Retorna : 
-    - (float) Valor aproximado da integral, arredondado para 4 casas decimais.
-    
-    -----------
-
-    Dependências :
-    - É necessário ter a biblioteca `numpy` (importada como `np`).
-    - É necessário ter a biblioteca `matplotlib` (importado o módulo pyplot com `sp`).
-
-    -----------
-
-    Levanta :
-    
-    ValueError: Se `n` não é par.
-    -----------
-
-    Observações : 
-    - A função plota o gráfico com as parábolas da aproximação em azul, Junto com o gráfico da função.
-
-    '''
-
-    if n % 2 != 0 :
-        raise ValueError("O número de intervalos n deve ser par.")
+    if n % 2 != 0 or n <= 0 :
+        raise ValueError("O número de intervalos n deve um par maior do que 0.")
     
     x = np.linspace(inicio, final, n+1)
     y = np.array([f(xi) for xi in x])
