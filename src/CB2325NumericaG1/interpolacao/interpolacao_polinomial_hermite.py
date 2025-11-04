@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from typing import Callable
 
-def _hermite_interp_mat(x_pontos: list, y_pontos: list, dy_pontos: list, allow_extrapolation: bool = False) -> Callable | None:
+def _hermite_interp_mat(x_pontos: list, y_pontos: list, dy_pontos: list) -> Callable | None:
     """
     Função interna - Cria a função matemática da interpolação.
     
@@ -14,12 +14,9 @@ def _hermite_interp_mat(x_pontos: list, y_pontos: list, dy_pontos: list, allow_e
         x_pontos: Coordenadas x (n valores).
         y_pontos: Coordenadas y (n valores).
         dy_pontos: Derivadas dy/dx em cada x (n valores).
-        allow_extrapolation: Se False (padrão), levanta um ValueError 
-                                 para valores de x fora do intervalo de dados.
 
     Retorna:
         Uma função (Callable) que avalia o polinômio, ou None se der erro.
-        A função retornada é que irá lidar com o `ValueError` de extrapolação. 
     """
     try:
         x_pts = np.asarray(x_pontos, dtype=float)
@@ -39,6 +36,7 @@ def _hermite_interp_mat(x_pontos: list, y_pontos: list, dy_pontos: list, allow_e
         
     num_coefs = 2 * n
     
+    #valores min/max não são necessários para checagem, mas podem ser úteis se quiser saber o intervalo
     x_min = np.min(x_pts)
     x_max = np.max(x_pts)
     
@@ -67,14 +65,6 @@ def _hermite_interp_mat(x_pontos: list, y_pontos: list, dy_pontos: list, allow_e
         """
         x_val = np.asarray(x_novo, dtype=float)
         
-        if not allow_extrapolation:
-            out_of_bounds = (x_val < x_min) | (x_val > x_max)
-            if np.any(out_of_bounds):
-                raise ValueError(
-                    f"Valores {x_val[out_of_bounds]} estão fora do intervalo de interpolação [{x_min}, {x_max}]. "
-                    "Use allow_extrapolation=True para forçar o cálculo."
-                )
-                        
         return np.polyval(coefs[::-1], x_val)
     
     return polinomio_interpolador_hermite
@@ -121,11 +111,18 @@ def _plotar_hermite(x: list, y: list, dy: list, f: Callable, titulo: str = "Inte
     """
     #criar pontos para a curva suave
     x_min, x_max = min(x), max(x)
-    x_curve = np.linspace(x_min, x_max, 500)
+    
+    #estende ligeiramente o plot para mostrar a extrapolação, se desejado
+    #você pode ajustar 'padding' ou remover se preferir plotar só o intervalo
+    padding = 0.1 * (x_max - x_min)
+    if padding == 0: #caso de ponto único
+        padding = 1.0
+        
+    x_curve = np.linspace(x_min - padding, x_max + padding, 500)
     y_curve = f(x_curve)
     
     #calcular as retas tangentes nos pontos de interpolação
-    comprimento_tangente = 0.1 * (x_max - x_min)  # 10% do intervalo
+    comprimento_tangente = 0.1 * (x_max - x_min) if (x_max - x_min) > 0 else 0.1
     
     fig, ax = plt.subplots(figsize=(10, 6))
     
@@ -154,8 +151,7 @@ def _plotar_hermite(x: list, y: list, dy: list, f: Callable, titulo: str = "Inte
     plt.show()
 
 def hermite_interp(x_pontos: list, y_pontos: list, dy_pontos: list, 
-                           allow_extrapolation: bool = False, 
-                           titulo: str = "Interpolação de Hermite") -> Callable:
+                   titulo: str = "Interpolação de Hermite") -> Callable:
     """
     Cria e plota uma função de interpolação polinomial de Hermite.
 
@@ -163,48 +159,33 @@ def hermite_interp(x_pontos: list, y_pontos: list, dy_pontos: list,
         x_pontos: Coordenadas x (n valores).
         y_pontos: Coordenadas y (n valores).
         dy_pontos: Derivadas dy/dx em cada x (n valores).
-        allow_extrapolation: Se permite extrapolação.
         titulo: Título para o gráfico.
 
     Retorna:
         Função de interpolação de Hermite.
 
-    Raises:
-        ValueError: Se `allow_extrapolation` for False e `x_novo`
-                    estiver fora do intervalo [min(x_pontos), max(x_pontos)].
     Notas:
         Sobre a Extrapolação:
-        Por padrão, esta biblioteca não permite extrapolação (allow_extrapolation=False).
-        Isso evita que o polinômio seja avaliado em regiões onde ele
-        tende a crescer rapidamente e perder precisão numérica.
+        Esta função sempre permite a extrapolação (avaliar valores de x 
+        fora do intervalo de dados [min(x_pontos), max(x_pontos)]). 
+        O usuário é responsável por verificar os resultados, pois 
+        polinômios podem crescer rapidamente e produzir valores
+        imprevisíveis fora do intervalo de interpolação.
     """
     #ordenar coordenadas
     x_ord, y_ord, dy_ord = _ordenar_coordenadas_hermite(x_pontos, y_pontos, dy_pontos)
     
-    #criar função de interpolação - p plotagem, permitimos extrapolação
-    #p poder calcular derivadas numéricas nas bordas
-    f_interp = _hermite_interp_mat(x_ord, y_ord, dy_ord, allow_extrapolation=True)
+    #criar função de interpolação
+    f_interp = _hermite_interp_mat(x_ord, y_ord, dy_ord)
     
     if f_interp is None:
         print("Erro: Não foi possível criar a função de interpolação.")
         return None
     
     #plot
+    # A função de plot também vai mostrar um pouco da extrapolação
     _plotar_hermite(x_ord, y_ord, dy_ord, f_interp, titulo)
 
-    #se o usuário não quiser extrapolação, cria outra versão restrita
-    if not allow_extrapolation:
-        def f_interp_restrita(x):
-            x_val = np.asarray(x, dtype=float)
-            x_min, x_max = min(x_ord), max(x_ord)
-            
-            if np.any((x_val < x_min) | (x_val > x_max)):
-                raise ValueError(
-                    f"Valores fora do intervalo [{x_min}, {x_max}]. "
-                    "Use allow_extrapolation=True para forçar o cálculo."
-                )
-            return f_interp(x_val)
-        
-        return f_interp_restrita
+    #a lógica de restrição foi removida.
     
     return f_interp
