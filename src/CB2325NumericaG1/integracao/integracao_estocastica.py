@@ -6,7 +6,7 @@ import math as mt
 from typing import Callable
 
 
-def monte_carlo(f: Callable[[float], float],inicio: float,final: float,n: int,plot: bool = False) -> float:
+def monte_carlo_one_variable(f: Callable[[float], float],inicio: float,final: float,n: int,plot: bool = False) -> float:
     """
     Calcula a integral aproximada de uma função univariada utilizando o método de Monte Carlo.
 
@@ -193,5 +193,6 @@ def monte_carlo_two_variables(f: Callable[[float, float], float],inicio_x: float
         plt.show()
 
     return round(volume, 4)
+
 
 
