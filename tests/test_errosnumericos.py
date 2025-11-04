@@ -1,5 +1,5 @@
 from pytest import approx
-from erros import erro_absoluto, erro_relativo
+from CB2325NumericaG1.erros import erro_absoluto, erro_relativo
 
 def test_erro_absoluto_simples1():
     # Testa se o erro absoluto entre números naturias, 4 e 3, é 1.
