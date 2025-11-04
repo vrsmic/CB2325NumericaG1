@@ -27,7 +27,10 @@ def _ordenar_coordenadas(x: list, y: list) -> list:
 
     return x_ord, y_ord
 
-def _plotar(x: list, y: list, f: Callable, titulo: str = 'Gráfico'):
+def _plotar(x: list,
+            y: list,
+            f: Callable,
+            titulo: str = 'Gráfico'):
     """Plotagem de pontos e de uma função.
 
     Plotagem dos pontos indicados pelas coordenadas x e y, seguindo a
@@ -55,12 +58,16 @@ def _plotar(x: list, y: list, f: Callable, titulo: str = 'Gráfico'):
 
     return
 
-def lin_interp(x: list, y: list, plot: bool = False) -> Callable:
+def lin_interp(x: list,
+               y: list,
+               plot: bool = False
+               ) -> Callable:
     """Interpolação linear por partes a partir dos pontos dados.
 
     Args:
         x: lista das coordenadas x, em x[i], de cada ponto i.
         y: lista das coordenadas y, em y[i], de cada ponto i.
+        plot: indica se deve haver a plotagem (True) ou não (False).
 
     Returns:
         Função de interpolação linear, que 'liga' os pontos descritos
