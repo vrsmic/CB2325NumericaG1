@@ -1,4 +1,4 @@
-import CB2325NumericaG1.integracao
+from CB2325NumericaG1.integracao import trapezio, simpson13
 import math
 
 def test_trapezio_seno() :
