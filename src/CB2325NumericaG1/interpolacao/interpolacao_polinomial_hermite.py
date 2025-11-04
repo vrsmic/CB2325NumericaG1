@@ -36,7 +36,7 @@ def _hermite_interp_mat(x_pontos: list, y_pontos: list, dy_pontos: list) -> Call
         
     num_coefs = 2 * n
     
-    #valores min/max não são necessários para checagem, mas podem ser úteis se quiser saber o intervalo
+    #valores min/max não são necessários pra checagem, mas podem ser úteis se quiser saber o intervalo
     x_min = np.min(x_pts)
     x_max = np.max(x_pts)
     
