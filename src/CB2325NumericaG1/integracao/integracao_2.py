@@ -144,6 +144,7 @@ def monte_carlo_two_variables(f: Callable[[float, float], float],inicio_x: float
 
     soma_valores = 0.0
     
+    #Vetores para plotagem 3D mais tarde.
     pontos_x = []
     pontos_y = []
     pontos_z = []
@@ -194,34 +195,3 @@ def monte_carlo_two_variables(f: Callable[[float, float], float],inicio_x: float
     return round(volume, 4)
 
 
-
-
-if __name__ == "__main__":
-    function_of_two_variables = lambda x, y: (x**2) * y
-    function_of_one_variable = lambda x: mt.sin(x)
-
-    n = int(input("Digite o número de pontos para o método de Monte Carlo: "))
-
-    integral_dupla = monte_carlo_two_variables(
-        f=function_of_two_variables,
-        inicio_x=0,
-        final_x=1,
-        inicio_y=0,
-        final_y=1,
-        n=n,
-        plot = True
-    )
-
-    integral_simples = monte_carlo(
-        f=function_of_one_variable,
-        inicio=0,
-        final=mt.pi,
-        n=n,
-        plot=True
-    )
-
-    print(
-        f"\nCom {n} pontos:\n"
-        f"→ A integral dupla [0,1]x[0,1] de f(x,y) = x²y ≈ {integral_dupla}\n"
-        f"→ A integral simples [0,π] de f(x) = sin(x) ≈ {integral_simples}"
-    )
