@@ -2,7 +2,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 import random
-import math as mt
 from typing import Callable
 
 
@@ -193,6 +192,7 @@ def monte_carlo_two_variables(f: Callable[[float, float], float],inicio_x: float
         plt.show()
 
     return round(volume, 4)
+
 
 
 
