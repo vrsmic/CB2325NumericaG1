@@ -64,14 +64,19 @@ def lin_interp(x: list,
                ) -> Callable:
     """Interpolação linear por partes a partir dos pontos dados.
 
+    Essa função ordena pontos a partir da ordem crescente das
+    coordenadas x. Em seguida, cria retas descritas pela nova
+    função f, que 'ligam' os pontos descritos pelas coordenadas x e y.
+    É permitida extrapolação. Por fim, caso 'plot = True', há uma
+    plotagem do gráfico correspondente.
+
     Args:
         x: lista das coordenadas x, em x[i], de cada ponto i.
         y: lista das coordenadas y, em y[i], de cada ponto i.
         plot: indica se deve haver a plotagem (True) ou não (False).
 
     Returns:
-        Função de interpolação linear, que 'liga' os pontos descritos
-        pelas coordenadas x e y.
+        f: função de interpolação linear por partes
     """
 
     # Ordenação das coordenadas x em ordem crescente
