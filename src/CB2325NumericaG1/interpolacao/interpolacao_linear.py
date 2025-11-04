@@ -3,16 +3,19 @@ import numpy as np
 from typing import Callable
 
 def _ordenar_coordenadas(x: list, y: list) -> list:
-    """
-    Ordena as coordenadas mantendo 'pareamento'.
+    """Ordena as coordenadas mantendo 'pareamento'.
+    
+    Pega as coordenadas x e y de cada ponto, ordena em ordem crescente
+    as coordenadas x e mantém pareamento com y. Função privada, auxiliar
+    da função principal lin_interp.
 
-    Parâmetros:
-    x: lista das coordenadas x, em x[i], de cada ponto i.
-    y: lista das coordenadas y, em y[i], de cada ponto i.
+    Args:
+        x: lista das coordenadas x, em x[i], de cada ponto i.
+        y: lista das coordenadas y, em y[i], de cada ponto i.
 
-    Retorna:
-    x_ord: lista das coordenadas x em ordem crescente.
-    y_ord: lista das coordenadas y, pareadas com as coordenadas x.
+    Returns:
+        x_ord: lista das coordenadas x em ordem crescente.
+        y_ord: lista das coordenadas y, pareadas com as coordenadas x.
     """
     x_np = np.array(x)
     y_np = np.array(y)
@@ -24,43 +27,44 @@ def _ordenar_coordenadas(x: list, y: list) -> list:
 
     return x_ord, y_ord
 
-def _plotar(x: list, y: list, f: Callable):
+def _plotar(x: list, y: list, f: Callable, titulo: str = 'Gráfico'):
+    """Plotagem de pontos e de uma função.
+
+    Plotagem dos pontos indicados pelas coordenadas x e y, seguindo a
+    função f. Função privada, auxiliar da função principal lin_interp.
+
+    Args:
+        x: lista das coordenadas x, em x[i], de cada ponto i.
+        y: lista das coordenadas y, em y[i], de cada ponto i.
+        f: função que será plotada.
+
+    Returns:
+        None
     """
-    Plotagem de pontos e de uma função.
-
-    Parâmetros:
-    x: lista das coordenadas x, em x[i], de cada ponto i.
-    y: lista das coordenadas y, em y[i], de cada ponto i.
-    f: função que será plotada.
-
-    Retorna:
-    None
-
-    Observações:
-    Plota os pontos dados pelas coordenadas x e y.
-    Plota a função f.
-    """
-    x_points = np.linspace(x[0], x[-1], 100)
+    x_points = np.linspace(x[0], x[-1], 500)
     y_points = [f(xp) for xp in x_points]
 
     _, ax = plt.subplots()
-    ax.scatter(x, y)
-    ax.plot(x_points, y_points)
+    ax.scatter(x, y, color = 'red', label = 'Dados')
+    ax.plot(x_points, y_points, label = 'Interpolação Linear por Partes')
+    ax.set_xlabel('x')
+    ax.set_ylabel('y')
+    ax.set_title(titulo)
+    ax.grid(True)
     plt.show()
 
     return
 
-def lin_interp(x: list, y: list) -> Callable:
-    """
-    Interpolação linear por partes a partir dos pontos dados.
+def lin_interp(x: list, y: list, plot: bool = False) -> Callable:
+    """Interpolação linear por partes a partir dos pontos dados.
 
-    Parâmetros:
-    x: lista das coordenadas x, em x[i], de cada ponto i.
-    y: lista das coordenadas y, em y[i], de cada ponto i.
+    Args:
+        x: lista das coordenadas x, em x[i], de cada ponto i.
+        y: lista das coordenadas y, em y[i], de cada ponto i.
 
-    Retorna:
-    Função de interpolação linear, que 'liga' os pontos descritos
-    pelas coordenadas x e y.
+    Returns:
+        Função de interpolação linear, que 'liga' os pontos descritos
+        pelas coordenadas x e y.
     """
 
     # Ordenação das coordenadas x em ordem crescente
@@ -91,6 +95,7 @@ def lin_interp(x: list, y: list) -> Callable:
                     return y1
 
     # Plotagem do gráfico correspondente à função f
-    _plotar(x, y, f)
+    if plot:
+        _plotar(x, y, f, 'Interpolação Linear por Partes')
 
     return f
