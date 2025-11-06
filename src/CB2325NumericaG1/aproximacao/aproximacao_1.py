@@ -11,6 +11,83 @@ import matplotlib.pyplot as plt
 
 ## Funções polinomiais de aproximação.
 
+# Regressão de grau N.
+def regressao(dados_x: npt.ArrayLike, dados_y: npt.ArrayLike, grau: int, plot: bool = False) -> np.ndarray:
+    """
+    Calcula os coeficientes de uma regressão polinomial usando Mínimos Quadrados.
+
+    Esta função ajusta um polinômio de grau 'grau' (y = ... + c_1*x + c_0)
+    aos dados, resolvendo o sistema de mínimos quadrados lineares
+    A * c = y usando 'np.linalg.lstsq'.
+
+    Args:
+        dados_x (npt.ArrayLike): 
+            Vetor contendo os valores da variável independente.
+        dados_y (npt.ArrayLike): 
+            Vetor contendo os valores da variável dependente.
+        grau (int): 
+            O grau (d) do polinômio a ser ajustado.
+        plot (bool, optional): 
+            Se `True`, exibe o gráfico dos dados e da curva de regressão.
+            Padrão é `False`.
+
+    Returns:
+        np.ndarray: 
+            Um array numpy contendo os coeficientes do polinômio.
+            IMPORTANTE: Os coeficientes são retornados da menor potência
+            para a maior (ex: [c_0, c_1, ..., c_grau]).
+
+    Raises:
+        ValueError: 
+            Se 'dados_x' e 'dados_y' tiverem comprimentos diferentes.
+        np.linalg.LinAlgError: 
+            Pode ser levantado por 'np.linalg.lstsq' se a matriz
+            for singular ou houver problemas numéricos.
+
+    Dependencies:
+        - `numpy` (importado como `np`)
+        - `matplotlib.pyplot` (importado como `plt`) - Se plot=True
+
+    Notes:
+        - A função 'np.linalg.lstsq' é uma forma robusta de resolver
+          o problema de mínimos quadrados, geralmente usando decomposição
+          SVD ou QR por baixo dos panos.
+        - A ordem dos coeficientes retornados ([c_0, c_1, ...]) é o
+          inverso da ordem usada por 'np.polyfit' ([... c_1, c_0]).
+    """
+
+    if len(dados_x) != len(dados_y):
+        raise ValueError("Os dados de x e y devem ter o mesmo comprimento.")
+
+    dados_x = np.asarray(dados_x)
+    dados_y = np.asarray(dados_y)
+
+    # Constrói a Matriz de Design (Vandermonde).
+    A = np.vstack([dados_x**i for i in range(grau + 1)]).T
+
+    # Resolve o problema de mínimos quadrados A*c = y para c.
+    coeficientes, restos, rank, singulares = np.linalg.lstsq(A, dados_y, rcond=None)
+
+    if plot:
+        # Gera pontos para a linha de ajuste
+        x_fit = np.linspace(dados_x.min(), dados_x.max(), 500)
+        
+        # Como os nossos estão da menor para a maior, usamos [::-1].
+        y_fit = np.polyval(coeficientes[::-1], x_fit)
+
+        plt.figure(figsize=(10, 6))
+        plt.scatter(dados_x, dados_y, marker='.', color='blue', label='Dados', alpha=1)
+
+        plt.plot(x_fit, y_fit, 'r-', label=f'Ajuste Polinomial (Grau {grau})', linewidth=2)
+        plt.title(f'Aproximação Polinomial de Grau {grau} via Mínimos Quadrados')
+        plt.xlabel('X')
+        plt.ylabel('Y')
+        plt.legend()
+        plt.grid(True)
+        plt.show()
+
+    return coeficientes
+
 # Regressão Linear.
 def regressao_linear(x: npt.ArrayLike, y: npt.ArrayLike, plot: bool = False) -> tuple[float, float]:
     """
@@ -48,7 +125,7 @@ def regressao_linear(x: npt.ArrayLike, y: npt.ArrayLike, plot: bool = False) -> 
         - A regressão é realizada utilizando o Método dos Mínimos
           Quadrados Ordinários (MQO).
     """
-    
+
     # Converte as entradas para arrays numpy para garantir que o resto do código opere de forma consistente.
     x = np.asarray(x)
     y = np.asarray(y)
