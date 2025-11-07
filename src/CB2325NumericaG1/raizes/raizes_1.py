@@ -39,13 +39,15 @@ def bissecao(function: Callable, lower: float, upper: float, tolerance: float) -
         
     # Verifica se um dos limites do intervalo é raiz
     if lower_bound == 0:
-        return round(lower_bound, 4)
+        return round(lower, 4)
     elif upper_bound == 0:
-        return round(upper_bound, 4)
+        return round(upper, 4)
             
     # Verifica se a função cumpre as condições para a utilização desse método
     if lower_bound * upper_bound > 0:
         raise ValueError("A função não tem sinais opostos nos limites do intervalo.")
+    if tolerance <= 0:
+        raise ValueError("Valor de tolerância inválido")
     
     while upper-lower > tolerance:
         
