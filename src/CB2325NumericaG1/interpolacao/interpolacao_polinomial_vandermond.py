@@ -61,55 +61,28 @@ def _plotar(x: list,
 
     return
 
-def lin_interp(x: list,
-               y: list,
-               plot: bool = False
-               ) -> Callable:
-    """Interpolação linear por partes a partir dos pontos dados.
-
-    Essa função ordena pontos a partir da ordem crescente das
-    coordenadas x. Em seguida, cria retas descritas pela nova
-    função f, que 'ligam' os pontos descritos pelas coordenadas x e y.
-    É permitida extrapolação. Por fim, caso 'plot = True', há uma
-    plotagem do gráfico correspondente.
-
-    Args:
-        x: lista das coordenadas x, em x[i], de cada ponto i.
-        y: lista das coordenadas y, em y[i], de cada ponto i.
-        plot: indica se deve haver a plotagem (True) ou não (False).
-
-    Returns:
-        f: função de interpolação linear por partes
-    """
+def vandermond_interp(x: list,
+                      y: list,
+                      plot: bool = False) -> Callable:
     if len(x) != len(y):
-        raise RuntimeError(f"x e y devem ter a mesma quantidade de elementos")
-
-    # Ordenação das coordenadas x em ordem crescente
+            raise RuntimeError(f"x e y devem ter a mesma quantidade de elementos")
+    
     x, y = _ordenar_coordenadas(x, y)
-
-    # Definição da função de interpolação
+    
+    n = len(x)
+    matrix_vandermond = np.ones([n, n])
+    for i in range(n):
+        for k in range(1, n):
+            matrix_vandermond[i][k] = matrix_vandermond[i][k-1] * x[i]
+    
+    coef = np.linalg.solve(matrix_vandermond, y)
+    
     def f(x1: float) -> float:
-        if x1 < x[0]: # Caso fora do intervalo, continua a reta mais próxima
-            a = (y[1] - y[0])/(x[1] - x[0])
-            b = y[0]
-                    
-            y1 = b + (x1 - x[0]) * a 
-            return y1
-        elif x1 > x[-1]: # Caso fora do intervalo, continua a reta mais próxima
-            a = (y[-1] - y[-2])/(x[-1] - x[-2])
-            b = y[-2]
-                    
-            y1 = b + (x1 - x[-2]) * a
-            return y1
-        else:
-            for i in range (1, len(x)): # Busca intervalo do número x1 para atribuir valor f(x1)
-                if x[i] >= x1 >= x[i-1]:
-                    a = (y[i] - y[i-1])/(x[i] - x[i-1])
-                    b = y[i-1]
-                    
-                    y1 = b + (x1 - x[i-1]) * a # Aproximação linear
-                    
-                    return y1
+        y1 = 0
+        for a in coef[::-1]:
+            y1 = a + y1*x1
+
+        return y1
 
     # Plotagem do gráfico correspondente à função f
     if plot:
