@@ -52,7 +52,7 @@ def _plotar(x: list,
 
     _, ax = plt.subplots()
     ax.scatter(x, y, color = 'red', label = 'Dados')
-    ax.plot(x_points, y_points, label = 'Interpolação Linear por Partes')
+    ax.plot(x_points, y_points, label = 'Interpolação Polinomial (Vandermonde)')
     ax.set_xlabel('x')
     ax.set_ylabel('y')
     ax.set_title(titulo)
@@ -109,6 +109,6 @@ def vandermond_interp(x: list,
 
     # Plotagem do gráfico correspondente à função f
     if plot:
-        _plotar(x, y, f, 'Interpolação Linear por Partes')
+        _plotar(x, y, f, 'Interpolação Polinomial (Vandermonde)')
 
     return f
