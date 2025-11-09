@@ -80,7 +80,12 @@ def lin_interp(x: list,
 
     Returns:
         f: função de interpolação linear por partes
+
+    Raises:
+        RuntimeError: caso x e y não tenham mesma quantidade de elementos.
     """
+
+    # Verifica que x e y têm mesma quantidade de elementos
     if len(x) != len(y):
         raise RuntimeError(f"x e y devem ter a mesma quantidade de elementos")
 

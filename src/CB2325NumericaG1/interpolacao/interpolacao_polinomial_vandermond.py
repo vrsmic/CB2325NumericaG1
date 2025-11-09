@@ -64,22 +64,45 @@ def _plotar(x: list,
 def vandermond_interp(x: list,
                       y: list,
                       plot: bool = False) -> Callable:
+    """Interpolação polinomial pelo método de Vandermonde
+
+    Essa função ordena pontos a partir da ordem crescente das
+    coordenadas x. Em seguida, cria matriz de Vandermonde e retorna
+    a solução algébrica para, assim, conseguir os coeficientes do
+    polinômio interpolado. Por fim, caso 'plot = True', há uma
+    plotagem do gráfico correspondente.
+
+    Args:
+        x: lista das coordenadas x, em x[i], de cada ponto i.
+        y: lista das coordenadas y, em y[i], de cada ponto i.
+        plot: indica se deve haver a plotagem (True) ou não (False).
+
+    Returns:
+        f: função de interpolação linear por partes.
+
+    Raises:
+        RuntimeError: caso x e y não tenham mesma quantidade de elementos.
+    """
+
+    # Verifica se x e y têm a mesma quantidade de elementos
     if len(x) != len(y):
             raise RuntimeError(f"x e y devem ter a mesma quantidade de elementos")
     
+    # Ordenação das coordenadas x em ordem crescente
     x, y = _ordenar_coordenadas(x, y)
     
     n = len(x)
-    matrix_vandermond = np.ones([n, n])
-    for i in range(n):
+    matrix_vandermond = np.ones([n, n]) # Criação da matriz de Vandermonde com uns
+    for i in range(n): # Eleva cada elemento da matriz ao seu devido expoente
         for k in range(1, n):
             matrix_vandermond[i][k] = matrix_vandermond[i][k-1] * x[i]
     
     coef = np.linalg.solve(matrix_vandermond, y)
     
+    # Definição da função de interpolação
     def f(x1: float) -> float:
         y1 = 0
-        for a in coef[::-1]:
+        for a in coef[::-1]: # Método de Horner para calcular valores de polinômios
             y1 = a + y1*x1
 
         return y1
