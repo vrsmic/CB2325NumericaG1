@@ -14,7 +14,7 @@ def _hermite_interp_mat(x_pontos: list, y_pontos: list, dy_pontos: list) -> Call
     Parâmetros:
         x_pontos: Coordenadas x (n valores).
         y_pontos: Coordenadas y (n valores).
-        dy_pontos: Derivadas dy/dx em cada x (n valores).
+        dy_pontos: Derivadas dy/dx em cada x (n valores)."
 
     Retorna:
         Uma função (Callable) que avalia o polinômio, ou None se der erro.
@@ -203,6 +203,7 @@ def hermite_interp(x_pontos: list, y_pontos: list, dy_pontos: list,
 
     Retorna:
         Função de interpolação de Hermite.
+        Se f_real for fornecida, imprime o erro médio e máximo
 
     Notas:
         Sobre a Extrapolação:
@@ -222,6 +223,22 @@ def hermite_interp(x_pontos: list, y_pontos: list, dy_pontos: list,
     if f_interp is None:
         print("Erro: Não foi possível criar a função de interpolação.")
         return None
+    
+    # cálculo do erro (só se f_real for fornecida)
+    erro_medio = None
+    erro_maximo = None
+    if f_real is not None:
+        # gera 200 pontos igualmente espaçados no intervalo
+        x_test = np.linspace(min(x_ord), max(x_ord), 200)
+        y_real = f_real(x_test)
+        y_interp = f_interp(x_test)
+
+        erros = np.abs(y_real - y_interp)
+        erro_medio = np.mean(erros)
+        erro_maximo = np.max(erros)
+
+        print(f"Erro médio absoluto: {erro_medio:.6e}")
+        print(f"Erro máximo absoluto: {erro_maximo:.6e}")
 
     # plot
     # a função de plot também vai mostrar um pouco da extrapolação
