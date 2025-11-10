@@ -102,7 +102,7 @@ def _plotar(x: list,
         y_ideal = [f_ideal(xp) for xp in x_points]
         intv = [x[0], x[1]]
         erroMedio, erroMax = _error_pol(f, f_ideal, intv, n= 1000)
-        ax.set_title(titulo+f' - Erro Médio = {erroMedio:2.4f} - Max Error = {erroMax:2.4f}')
+        ax.set_title(titulo+f' - Erro Médio = {erroMedio:2.4f} - Erro Máximo = {erroMax:2.4f}')
         ax.plot(x_points, y_ideal, label = 'Função ideal')
     else:
         ax.set_title(titulo)
