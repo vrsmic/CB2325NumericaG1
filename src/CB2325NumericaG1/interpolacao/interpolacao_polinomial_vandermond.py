@@ -90,6 +90,7 @@ def _plotar(x: list,
     Returns:
         None
     """
+    # Conversão para numpy.array
     x_points = np.linspace(x[0], x[-1], 500)
     y_points = np.array([f(xp) for xp in x_points])
 
@@ -97,17 +98,20 @@ def _plotar(x: list,
         _, (ax, ax_err) = plt.subplots(
             2, 1, 
             figsize=(10, 10), 
-            gridspec_kw={'height_ratios': [2, 1]},
             sharex=True # Compartilha o eixo x
         )
         
-        y_ideal = np.array([f_ideal(xp) for xp in x_points])
+        y_ideal = np.array([f_ideal(xp) for xp in x_points]) # Pontos da função ideal
+
+        # Calcuando erros médio e máximo
         intv = [x[0], x[-1]]
         erroMedio, erroMax = _error_pol(f, f_ideal, intv, n= 1000)
         ax.set_title(titulo+f' - Erro Médio = {erroMedio:2.4f} - Erro Máximo = {erroMax:2.4f}')
+        
+        # Plotando a função ideal 
         ax.plot(x_points, y_ideal, color = 'k', label = 'Função ideal')
         
-        # Cálculo e plotagem do erro absoluto no gráfico inferior (ax_err)
+        # Calculando e plotando o erro absoluto em gráfico anexo ao original
         erro_absoluto = np.abs(y_ideal - y_points)
         ax_err.plot(x_points, erro_absoluto, 'r-', label='Erro Absoluto |Real - Interp.|')
         ax_err.set_xlabel('x')
@@ -116,7 +120,9 @@ def _plotar(x: list,
         ax_err.grid(True, alpha=0.3)
         ax_err.legend()
     else:
+        # Criando área de plotagem normal, sem gráfico de erro anexo
         _, ax = plt.subplots()
+        ax.set_title(titulo)
     
     ax.scatter(x, y, color = 'red', label = 'Dados')
     ax.plot(x_points, y_points, 'b-', linewidth=2, label = 'Interpolação Polinomial (Vandermonde)')
