@@ -1,44 +1,40 @@
 import numpy as np
 import sympy as sp
 import matplotlib as plt
+from typing import Callable, Union
 
-def newton_raphson(function, guess, tolerance):
-    
+def newton_raphson(function: Union[Callable, sp.Basic], guess: float, tolerance: float) -> float:
     """
-    Encontra uma raiz de uma função real usando o método de Newton–Raphson.
-    
-    ----------
+    Encontra/aproxima uma raiz de uma função real de variável real usando o método de Newton–Raphson.
 
-    Parâmetros
+    Calcula onde a reta tangente ao gráfico da função no ponto x0 cruza o eixo x.
+    Repete o processo com esse novo ponto x1.
     
-    function : callable ou sympy
-        Função cuja raíz queremos encontrar ou aproximar. Deve ser uma função real de variável real,
-        ou seja, aceita um único argumento (float).
-        Pode ser:
-         - um callable Python (por exemplo, lambda x: x**2 - 2) que usa operações com floats/numpy, ou
-         - uma expressão SymPy (por exemplo, sp.sympify("x**2 - 2")) ou sp.Lambda.
-        ***IMPORTANTE: para melhor eficiência do método, prefira usar funções sympy!!!
-    guess : float
-        Chute inicial x0.
-    tolerance : float
-        Critério de parada. O algoritmo para quando |f(x)| < tolerance ou |dx| < tolerance.
-    
-    ----------
-    
-    Retorna
-    
-    uma aproximação da raiz.
-    
-    um plot do método.
-    
-    ----------
+    Args:
+        function Union[Callable, sp.Basic]:
+            Função cuja raíz queremos encontrar ou aproximar.
+            Pode ser Callable ou sp.Basic.
+            Para melhor eficiência do método, deve ser sp.Basic.
+        guess (float):
+            Chute inicial x0.
+        tolerance (float):
+            Critério de parada.
+            O método para quando |f(x_n)| < tolerance ou |x_{n+1} - x_n| < tolerance.
 
-    Possíveis mensagens de erro
-    
-    ZeroDivisionError se a derivada (praticamente) zerar durante a iteração.
-    ValueError se a função produzir NaN/Inf no chute.
-    RuntimeError se não convergir dentro de um número máximo de 1000 iterações.
+    Returns:
+        float:
+            Valor aproximado da raiz, arredondado para 4 casas decimais.
 
+    Raises:
+        ValueError:
+            Se a expressão SymPy tiver mais de uma variável.
+            Se ocorrer NaN/Inf em algum momento da iteração.
+        TypeError:
+            Se function não for Callable ou sp.Basic.
+        ZeroDivisionError:
+            Se a derivada praticamente zerar em algum momento da iteração.
+        RunTimeError:
+            Se o método não convergir em no máximo 1000 iterações.
     """
 
     MAX_ITERS = 1000
@@ -77,7 +73,7 @@ def newton_raphson(function, guess, tolerance):
     
     # Caso 3: Entrada inválida
     else:
-        raise TypeError("function deve ser um callable (ex: lambda) ou uma expressão SymPy (Expr ou Lambda).")
+        raise TypeError("function deve ser Callable ou sp.Basic.")
     
     root = None
     for i in range(MAX_ITERS):
