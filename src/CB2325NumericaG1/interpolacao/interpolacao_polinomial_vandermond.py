@@ -93,7 +93,7 @@ def _plotar(x: list,
 
     _, ax = plt.subplots()
     ax.scatter(x, y, color = 'red', label = 'Dados')
-    ax.plot(x_points, y_points, label = 'Interpolação Polinomial (Vandermonde)')
+    ax.plot(x_points, y_points, 'b-', linewidth=2, label = 'Interpolação Polinomial (Vandermonde)')
     ax.set_xlabel('x')
     ax.set_ylabel('y')
     ax.grid(True)
@@ -103,7 +103,7 @@ def _plotar(x: list,
         intv = [x[0], x[1]]
         erroMedio, erroMax = _error_pol(f, f_ideal, intv, n= 1000)
         ax.set_title(titulo+f' - Erro Médio = {erroMedio:2.4f} - Erro Máximo = {erroMax:2.4f}')
-        ax.plot(x_points, y_ideal, label = 'Função ideal')
+        ax.plot(x_points, y_ideal, color = 'g', label = 'Função ideal')
     else:
         ax.set_title(titulo)
     
