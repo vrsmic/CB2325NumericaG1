@@ -121,7 +121,7 @@ def _plotar(x: list,
         ax.set_title(titulo)
     
     ax.scatter(x, y, color = 'red', label = 'Dados')
-    ax.plot(x_points, y_points, color = 'b-',
+    ax.plot(x_points, y_points, 'b-',
             linewidth=2, label = 'Interpolação Polinomial (Vandermonde)')
     ax.set_xlabel('x')
     ax.set_ylabel('y')
@@ -169,7 +169,7 @@ def vandermond_interp(x: list,
 
     if f_ideal is not None and not callable(f_ideal):
         raise TypeError("O argumento 'f_ideal' deve ser uma função (callable).")
-    if plot is not bool:
+    if type(plot) != bool:
         raise TypeError("O argumento 'plot' deve ser bool")
     
     if n != m:
