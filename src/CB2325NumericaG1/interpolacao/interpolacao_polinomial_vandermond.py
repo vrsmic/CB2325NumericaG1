@@ -16,12 +16,7 @@ def _ordenar_coordenadas(x: list, y: list) -> list:
     Returns:
         x_ord: lista das coordenadas x em ordem crescente.
         y_ord: lista das coordenadas y, pareadas com as coordenadas x.
-
-    Raises:
-        RuntimeError: caso x e y não tenham mesma quantidade de elementos.
     """
-    if len(x) != len(y):
-        raise RuntimeError(f"x e y devem ter a mesma quantidade de elementos")
     
     x_np = np.array(x)
     y_np = np.array(y)
@@ -90,6 +85,7 @@ def _plotar(x: list,
     Returns:
         None
     """
+    
     # Conversão para numpy.array
     x_points = np.linspace(x[0], x[-1], 500)
     y_points = np.array([f(xp) for xp in x_points])
@@ -125,7 +121,8 @@ def _plotar(x: list,
         ax.set_title(titulo)
     
     ax.scatter(x, y, color = 'red', label = 'Dados')
-    ax.plot(x_points, y_points, 'b-', linewidth=2, label = 'Interpolação Polinomial (Vandermonde)')
+    ax.plot(x_points, y_points, color = 'b-',
+            linewidth=2, label = 'Interpolação Polinomial (Vandermonde)')
     ax.set_xlabel('x')
     ax.set_ylabel('y')
     ax.grid(True, alpha=0.3)
@@ -158,12 +155,29 @@ def vandermond_interp(x: list,
         f: função de interpolação linear por partes.
 
     Raises:
-        RuntimeError: caso x e y não tenham mesma quantidade de elementos.
+        ValueError: Caso 'x' e 'y' tenham tamanhos diferentes, caso as listas
+        estejam vazias, ou caso as coordenadas em 'x' não sejam distintas.
+        TypeError: caso 'x' ou 'y' não sejam listas, caso 'f_ideal' não seja
+        callable, ou caso 'plot não seja bool'.
     """
+    # Tratamento de erros
+    try:
+        n = len(x)
+        m = len(y)
+    except:
+        raise TypeError("Os argumentos 'x' e 'y' devem ser listas.")
 
-    # Verifica se x e y têm a mesma quantidade de elementos
-    if len(x) != len(y):
-            raise RuntimeError(f"x e y devem ter a mesma quantidade de elementos")
+    if f_ideal is not None and not callable(f_ideal):
+        raise TypeError("O argumento 'f_ideal' deve ser uma função (callable).")
+    if plot is not bool:
+        raise TypeError("O argumento 'plot' deve ser bool")
+    
+    if n != m:
+        raise ValueError("As listas de coordenadas x e y devem ter o mesmo tamanho.")
+    if n == 0:
+        raise ValueError("As listas x e y não podem estar vazias.")
+    if len(set(x)) != n:
+        raise ValueError("As coordenadas x devem ser todas distintas.")
     
     # Ordenação das coordenadas x em ordem crescente
     x, y = _ordenar_coordenadas(x, y)
