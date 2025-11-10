@@ -15,7 +15,7 @@ _Autores_
 - Luana Fagundes
 - Luana Mognon
 - Lucas Fraga
-- Mariana Tiemi
+- Mariana Yoshioka
 - Mateus Galvão
 - Micaele Brandão
 - Rafael Almeida
