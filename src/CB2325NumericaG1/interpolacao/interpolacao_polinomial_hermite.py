@@ -117,50 +117,46 @@ def _plotar_hermite(x: list, y: list, dy: list, f: Callable,
     """
     # criar pontos para a curva suave
     x_min, x_max = min(x), max(x)
-
-    # estende ligeiramente o plot para mostrar a extrapolação, se desejado
-    # você pode ajustar 'padding' ou remover se preferir plotar só o intervalo
     padding = 0.1 * (x_max - x_min)
-    if padding == 0:  # caso de ponto único
-        padding = 1.0
-
     x_curve = np.linspace(x_min - padding, x_max + padding, 500)
     y_curve = f(x_curve)
+
+    if f_real:
+        y_real_curve = f_real(x_curve)
+        erro_absoluto = np.abs(y_real_curve - y_curve)
+        erro_medio = np.mean(erro_absoluto)
+        erro_maximo = np.max(erro_absoluto)
+    else:
+        y_real_curve = None
+        erro_absoluto = None
+        erro_medio = erro_maximo = None
+
+    # Cria dois subgráficos: função e erro
+    fig, (ax, ax_err) = plt.subplots(
+        2, 1, 
+        figsize=(10, 8), 
+        gridspec_kw={'height_ratios': [2, 1]},
+        sharex=True
+    )
+
+    # Gráfico principal
+    if f_real:
+        ax.plot(x_curve, y_real_curve, 'k-', linewidth=2, label='Função ideal')
+    ax.scatter(x, y, color='red', s=50, label='Dados')
+    ax.plot(x_curve, y_curve, 'b-', linewidth=2, label='Interpolação Polinomial (Hermite)')
+
+    ax.set_ylabel('y')
+    if erro_medio is not None:
+        ax.set_title(f"Interpolação Polinomial (Hermite) - Erro Médio = {erro_medio:.4f} - Erro Máximo = {erro_maximo:.4f}")
+    else:
+        ax.set_title(titulo)
+    ax.legend()
+    ax.grid(True, alpha=0.3)
 
     # calcular as retas tangentes nos pontos de interpolação
     comprimento_tangente = 0.1 * \
         (x_max - x_min) if (x_max - x_min) > 0 else 0.1
-
-    if f_real:
-        # Se f_real for fornecida, cria 2 subplots (um para a função, um para o erro)
-        fig, (ax, ax_err) = plt.subplots(
-            2, 1, 
-            figsize=(10, 10), 
-            gridspec_kw={'height_ratios': [2, 1]},
-            sharex=True # Compartilha o eixo x
-        )
-        
-        # Plot da função real no gráfico principal (ax)
-        y_real_curve = f_real(x_curve)
-        ax.plot(x_curve, y_real_curve, 'k:', linewidth=2, label='Função Real')
-
-        # Cálculo e plotagem do erro absoluto no gráfico inferior (ax_err)
-        erro_absoluto = np.abs(y_real_curve - y_curve)
-        ax_err.plot(x_curve, erro_absoluto, 'r-', label='Erro Absoluto |Real - Interp.|')
-        ax_err.set_xlabel('x')
-        ax_err.set_ylabel('Erro Absoluto')
-        ax_err.set_title('Gráfico de Erro')
-        ax_err.grid(True, alpha=0.3)
-        ax_err.legend()
-        
-    else:
-        # Comportamento original: apenas um gráfico
-        fig, ax = plt.subplots(figsize=(10, 6))
-
-    # gráfico principal
-    ax.scatter(x, y, color='red', s=50, zorder=5, label='Pontos de dados')
-    ax.plot(x_curve, y_curve, 'b-', linewidth=2, label='Polinômio de Hermite')
-
+    
     # adc retas tangentes
     tangente_plotted = False
     for xi, yi, dyi in zip(x, y, dy):
@@ -173,14 +169,15 @@ def _plotar_hermite(x: list, y: list, dy: list, f: Callable,
             tangente_plotted = True
         ax.plot(xi, yi, 'ro', markersize=8)
 
-    ax.set_ylabel('y')
-    ax.set_title(titulo)
-    ax.grid(True, alpha=0.3)
-    ax.legend()
 
-    # Se não houver gráfico de erro, adiciona o label 'x' ao gráfico principal
-    if not f_real:
-        ax.set_xlabel('x')
+    # Gráfico de erro
+    if f_real:
+        ax_err.plot(x_curve, erro_absoluto, 'r-', label='Erro Absoluto |Real - Interp.|')
+        ax_err.set_xlabel('x')
+        ax_err.set_ylabel('Erro')
+        ax_err.set_title('Gráfico de Erro')
+        ax_err.legend()
+        ax_err.grid(True, alpha=0.3)
 
     plt.tight_layout()
     plt.show()
