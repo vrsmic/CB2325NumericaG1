@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from typing import Callable
         
-def bissecao(function: Callable, lower: float, upper: float, tolerance: float, plot: bool = True) -> float:
+def bissecao(function: Callable, lower: float, upper: float, tolerance: float, plot: bool = False) -> float:
     '''
     Calcula a raiz aproximada de uma função usando o método da bisseção.
 
@@ -70,6 +70,7 @@ def bissecao(function: Callable, lower: float, upper: float, tolerance: float, p
 
         plt.xlim(lower_record[0], upper_record[0])
         plt.title("Raízes da função pelo Método da Bisseção")
+        plt.grid(True, linestyle='--', alpha=0.6)
         plt.xlabel("x")
         plt.ylabel("f(x)")
         plt.legend()
