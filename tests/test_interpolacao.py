@@ -36,6 +36,7 @@ def test_poly_interp():
     assert p(1.5) == approx(2.875)
     assert p(2.75) == approx(-0.71875)
     assert p(0.2) == approx(1.64)
+
     # exemplo do PDF de instruções
     x_pdf = [0, 1, 2, 3]
     y_pdf = [1, 2, 0, 4]
@@ -47,7 +48,7 @@ def test_poly_interp():
     x_dup = [0, 1, 2, 2]
     y_dup = [1, 2, 3, 4]
     with raises(ValueError):
-        poly_interp(x_dup, y)
+        poly_interp(x_dup, y_dup)
     
     # listas com tamanhos diferentes
     x_diff = [0, 1, 2]
