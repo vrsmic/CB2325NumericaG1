@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from typing import Callable
         
-def bissecao(function: Callable, lower: float, upper: float, tolerance: float) -> float:
+def bissecao(function: Callable, lower: float, upper: float, tolerance: float, plot = bool True) -> float:
 
     '''
     Calcula a raiz aproximada de uma função usando o método da bisseção.
@@ -67,31 +67,32 @@ def bissecao(function: Callable, lower: float, upper: float, tolerance: float) -
         # Adiciona os novos pontos às listas de histórico
         lower_record.append(lower)
         upper_record.append(upper)
-    
-    x = np.linspace(lower_record[0], upper_record[0], 100)
-    y = function(x)
+            
+    if plot:
+        x = np.linspace(lower_record[0], upper_record[0], 100)
+        y = function(x)
 
-    # Plota o eixo x.
-    plt.axhline(0, color='dimgrey', linewidth=1.5)
-    
-    # Plota a função original em preto.
-    plt.plot(x, y, color = 'black', linewidth = 1.0, label = 'f(x)') 
+        # Plota o eixo x.
+        plt.axhline(0, color='dimgrey', linewidth=1.5)
 
-    lower_points_y = function(np.array(lower_record))
-    upper_points_y = function(np.array(upper_record))
+        # Plota a função original em preto.
+        plt.plot(x, y, color = 'black', linewidth = 1.0, label = 'f(x)') 
 
-    plt.scatter(lower_record, lower_points_y, s=20.0, c='royalblue', label='Limite Inferior', zorder=2)
-    plt.xlim(lower_record[0], upper_record[0])
-    plt.scatter(upper_record, upper_points_y,s=20.0, c='crimson', label='Limite Superior', zorder=2)
+        lower_points_y = function(np.array(lower_record))
+        upper_points_y = function(np.array(upper_record))
+
+        plt.scatter(lower_record, lower_points_y, s=20.0, c='royalblue', label='Limite Inferior', zorder=2)
+        plt.xlim(lower_record[0], upper_record[0])
+        plt.scatter(upper_record, upper_points_y,s=20.0, c='crimson', label='Limite Superior', zorder=2)
 
 
-    # Configuração do gráfico
-    # plt.axis('equal')
-    plt.title("Raízes da função pelo Método da Bisseção")
-    plt.xlabel("x")
-    plt.ylabel("f(x)")
-    plt.legend()
-    plt.show()
+        # Configuração do gráfico
+        # plt.axis('equal')
+        plt.title("Raízes da função pelo Método da Bisseção")
+        plt.xlabel("x")
+        plt.ylabel("f(x)")
+        plt.legend()
+        plt.show()
 
     # Quando o loop para, a função retorna a melhor estimativa, isto é, o ponto médio do último intervalo
     final_root = (lower + upper) / 2

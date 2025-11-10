@@ -6,6 +6,7 @@ import math
 # Bibliotecas de terceiros
 import pytest
 import numpy as np
+import numpy.testing as npt
 import sympy as sp
 
 # Funções a serem testadas (do outro arquivo)
@@ -14,123 +15,125 @@ from CB2325NumericaG1.aproximacao import regressao, regressao_linear, regressao_
 TOLERANCIA = 1e-6 # Tolerância para comparações de float.
 
 @pytest.fixture
-def x_symbol():
-    """Fixture para fornecer o símbolo 'x' do sympy."""
-    return sp.Symbol('x')
+def sym_x():
+    return sp.symbols('x')
 
-def test_regressao_grau_2_ajuste_perfeito():
-    """Testa uma regressão quadrática perfeita: y = x^2 - x + 2"""
-    # y = 1*x^2 - 1*x + 2
-    x = np.array([-1, 0, 1, 2, 3])
-    y = np.array([4, 2, 2, 4, 8])
-    grau = 2
-    
-    coefs = regressao(x, y, grau)
-    
-    esperado = np.array([2.0, -1.0, 1.0])
-    
-    assert coefs == pytest.approx(esperado, abs=TOLERANCIA)
 
-def test_regressao_grau_1_equivale_a_linear():
-    """Testa se a regressão de grau 1 produz o mesmo resultado da linear."""
-    x = np.array([0, 1, 2, 3, 4])
-    y = np.array([1, 3, 5, 7, 9]) # y = 2x + 1
+### 1. Testes para regressao()
+def test_regressao_grau_1_perfeita():
+    # y = 2x + 3
+    x = np.array([0, 1, 2, 3])
+    y = np.array([3, 5, 7, 9])
     
-    a_lin, b_lin = regressao_linear(x, y) # (a=2.0, b=1.0)
+    # Espera [c0, c1] -> [3, 2]
+    coefs = regressao(x, y, grau=1, plot=False)
     
-    # Teste com regressao grau 1
-    coefs_reg = regressao(x, y, grau=1) # [c0, c1] -> [1.0, 2.0]
+    assert len(coefs) == 2
+    npt.assert_allclose(coefs, [3.0, 2.0], atol=1e-9)
+
+def test_regressao_grau_2_perfeita():
+    # y = 1*x^2 + 2*x + 3
+    x = np.array([0, 1, 2, 3])
+    y = np.array([3, 6, 11, 18])
     
-    assert coefs_reg[0] == pytest.approx(b_lin, abs=TOLERANCIA)
-    assert coefs_reg[1] == pytest.approx(a_lin, abs=TOLERANCIA)
-
-def test_regressao_error_comprimentos_diferentes():
-    """Testa se levanta ValueError para comprimentos de x e y diferentes."""
-    x = [1, 2, 3]
-    y = [1, 2]
-
-    with pytest.raises(ValueError, match="Os dados de x e y devem ter o mesmo comprimento."):
-        regressao(x, y, grau=1)
-
-def test_regressao_linear_ajuste_perfeito():
-    """Testa uma regressão linear perfeita: y = 2x + 1"""
-    x = [0, 1, 2]
-    y = [1, 3, 5]
-    esperado_a, esperado_b = 2.0, 1.0
+    # Espera [c0, c1, c2] -> [3, 2, 1]
+    coefs = regressao(x, y, grau=2, plot=False)
     
-    a, b = regressao_linear(x, y)
+    assert len(coefs) == 3
+    npt.assert_allclose(coefs, [3.0, 2.0, 1.0], atol=1e-9)
+
+
+### 2. Testes para regressao_linear()
+def test_regressao_linear_perfeita():
+    # y = -1.5x + 5
+    x = np.array([0, 2, 4])
+    y = np.array([5, 2, -1])
     
-    assert a == pytest.approx(esperado_a, abs=TOLERANCIA)
-    assert b == pytest.approx(esperado_b, abs=TOLERANCIA)
+    # Espera (a, b) -> (-1.5, 5.0)
+    a, b = regressao_linear(x, y, plot=False)
+    
+    npt.assert_allclose([a, b], [-1.5, 5.0], atol=1e-9)
 
-def test_regressao_linear_error_comprimentos_diferentes():
-    """Testa se levanta ValueError para comprimentos de x e y diferentes."""
-    x = [1, 2]
-    y = [1, 2, 3]
-
-    with pytest.raises(ValueError, match="X e y devem ter o mesmo número de amostras."):
+def test_regressao_linear_erro_tamanho_diferente():
+    x = np.array([1, 2, 3])
+    y = np.array([1, 2])
+    
+    with pytest.raises(ValueError, match="mesmo número de amostras"):
         regressao_linear(x, y)
 
-def test_regressao_logaritmica_ajuste_perfeito():
-    """Testa uma regressão logarítmica perfeita: y = 2*ln(x) + 3"""
-    # Usamos math.e para que np.log(math.e) == 1.0
-    x = [1, math.e, math.e**2] 
-    y = [3, 5, 7]
+def test_regressao_linear_erro_poucos_pontos():
+    x = np.array([1])
+    y = np.array([1])
     
-    a, b = regressao_logaritmica(x, y)
+    with pytest.raises(ValueError, match="pelo menos 2 pontos"):
+        regressao_linear(x, y)
+
+def test_regressao_linear_erro_x_constante():
+    x = np.array([5, 5, 5])
+    y = np.array([1, 2, 3])
     
-    assert a == pytest.approx(2.0, abs=TOLERANCIA)
-    assert b == pytest.approx(3.0, abs=TOLERANCIA)
+    with pytest.raises(ValueError, match="Valores de 'x' são constantes"):
+        regressao_linear(x, y)
 
-def test_regressao_logaritmica_error_x_negativo():
-    """Testa se levanta ValueError se x contém valores negativos."""
-    x = [1, -1, 2]
-    y = [1, 2, 3]
 
-    with pytest.raises(ValueError, match="Todos os valores de 'x' devem ser positivos"):
+### 3. Testes para regressao_logaritmica()
+def test_regressao_logaritmica_perfeita():
+    # y = 2 * ln(x) + 3
+    x = np.array([1, np.e, np.e**2, np.e**3])
+    # ln(x) = [0, 1, 2, 3]
+    y = np.array([3, 5, 7, 9])
+    
+    a, b = regressao_logaritmica(x, y, plot=False)
+    
+    npt.assert_allclose([a, b], [2.0, 3.0], atol=1e-9)
+
+def test_regressao_logaritmica_erro_x_zero():
+    x = np.array([1, 2, 0])
+    y = np.array([1, 2, 3])
+    
+    with pytest.raises(ValueError, match="positivos"):
         regressao_logaritmica(x, y)
 
-def test_regressao_logaritmica_error_x_zero():
-    """Testa se levanta ValueError se x contém zero."""
-    x = [1, 0, 2]
-    y = [1, 2, 3]
-
-    with pytest.raises(ValueError, match="Todos os valores de 'x' devem ser positivos"):
+def test_regressao_logaritmica_erro_x_negativo():
+    x = np.array([1, 2, -1])
+    y = np.array([1, 2, 3])
+    
+    with pytest.raises(ValueError, match="positivos"):
         regressao_logaritmica(x, y)
 
-def test_polinomio_de_taylor_exp_x_em_0(x_symbol):
-    """Testa P_3(x) para f(x) = e^x em a=0. Esperado: 1 + x + x^2/2 + x^3/6"""
-    func = sp.exp(x_symbol)
-    point = 0
-    times = 4 # Grau 3 (termos de 0 a 3)
-    
-    expected_poly = 1 + x_symbol + x_symbol**2 / 2 + x_symbol**3 / 6
-    
-    poly = polinomio_de_taylor(func, x_symbol, point, times, plot=False)
-    
-    # Compara a forma expandida para garantir a igualdade simbólica
-    assert poly.expand() == expected_poly.expand()
 
-def test_polinomio_de_taylor_sin_x_em_0(x_symbol):
-    """Testa P_3(x) para f(x) = sin(x) em a=0. Esperado: x - x^3/6"""
-    func = sp.sin(x_symbol)
-    point = 0
-    times = 4 # Grau 3 (termos 0, 1, 2, 3)
+### 4. Testes para polinomio_de_taylor()
+def test_taylor_exp_x_em_zero(sym_x):
+    # Série de e^x em x=0
+    # 1 + x + x^2/2
+    f = sp.exp(sym_x)
+    poly = polinomio_de_taylor(f, sym_x, 0, 3, plot=False)
     
-    expected_poly = x_symbol - x_symbol**3 / 6
-    
-    poly = polinomio_de_taylor(func, x_symbol, point, times, plot=False)
-    
-    assert poly.expand() == expected_poly.expand()
+    esperado = 1 + sym_x + sym_x**2 / 2
+    assert poly == esperado
 
-def test_polinomio_de_taylor_cos_x_em_pi(x_symbol):
-    """Testa P_2(x) para f(x) = cos(x) em a=pi. Esperado: -1 + (x-pi)^2/2"""
-    func = sp.cos(x_symbol)
-    point = sp.pi
-    times = 3 # Grau 2 (termos 0, 1, 2)
+def test_taylor_sin_x_em_zero(sym_x):
+    # Série de sin(x) em x=0
+    # x - x^3/6
+    f = sp.sin(sym_x)
+    poly = polinomio_de_taylor(f, sym_x, 0, 4, plot=False)
     
-    expected_poly = -1 + (x_symbol - sp.pi)**2 / 2
+    esperado = sym_x - sym_x**3 / 6
+    assert poly == esperado
+
+def test_taylor_ln_x_em_um(sym_x):
+    # Série de ln(x) em x=1
+    # (x-1) - (x-1)^2/2
+    f = sp.log(sym_x)
+    poly = polinomio_de_taylor(f, sym_x, 1, 3, plot=False)
     
-    poly = polinomio_de_taylor(func, x_symbol, point, times, plot=False)
+    esperado = (sym_x - 1) - (sym_x - 1)**2 / 2
+    assert poly.expand() == esperado.expand()
+
+def test_taylor_plot_executa(sym_x, capsys):
+    # Testa se a função 'plot' imprime a mensagem esperada
+    f = sp.exp(sym_x)
+    polinomio_de_taylor(f, sym_x, 0, 2, plot=True)
     
-    assert poly.expand() == expected_poly.expand()
+    captured = capsys.readouterr()
+    assert "Gerando gráfico de comparação" in captured.out
