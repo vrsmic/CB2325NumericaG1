@@ -17,9 +17,6 @@ def _ordenar_coordenadas(x: list, y: list) -> list:
         x_ord: lista das coordenadas x em ordem crescente.
         y_ord: lista das coordenadas y, pareadas com as coordenadas x.
     """
-    if len(x) != len(y):
-        raise RuntimeError(f"x e y devem ter a mesma quantidade de elementos")
-    
     x_np = np.array(x)
     y_np = np.array(y)
 
@@ -52,7 +49,7 @@ def _plotar(x: list,
 
     _, ax = plt.subplots()
     ax.scatter(x, y, color = 'red', label = 'Dados')
-    ax.plot(x_points, y_points, label = 'Interpolação Linear por Partes')
+    ax.plot(x_points, y_points,'b-', linewidth=2, label = 'Interpolação Linear por Partes')
     ax.set_xlabel('x')
     ax.set_ylabel('y')
     ax.set_title(titulo)
@@ -80,14 +77,7 @@ def lin_interp(x: list,
 
     Returns:
         f: função de interpolação linear por partes
-
-    Raises:
-        RuntimeError: caso x e y não tenham mesma quantidade de elementos.
     """
-
-    # Verifica que x e y têm mesma quantidade de elementos
-    if len(x) != len(y):
-        raise RuntimeError(f"x e y devem ter a mesma quantidade de elementos")
 
     # Ordenação das coordenadas x em ordem crescente
     x, y = _ordenar_coordenadas(x, y)
