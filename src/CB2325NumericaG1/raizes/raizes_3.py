@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from typing import Callable
 
-def secante(function: Callable, guess0: float, guess1: float, tolerance: float) -> float:
+def secante(function: Callable, guess0: float, guess1: float, tolerance: float, plot: bool = False) -> float:
     """
     Docstrings secante
     """
@@ -56,5 +56,8 @@ def secante(function: Callable, guess0: float, guess1: float, tolerance: float) 
     if root is None:
         f_last = float(f(x_curr))
         raise RuntimeError(f"Não convergiu após {MAX_ITERS} iterações. Último x = {x_curr}, f(x) = {f_last}")
+    
+    if plot:
+        pass
     
     return root
