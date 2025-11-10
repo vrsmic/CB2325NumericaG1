@@ -76,7 +76,9 @@ def _plotar(x: list,
 
     Plotagem dos pontos indicados pelas coordenadas x e y, seguindo a
     função f. Caso haja uma função ideal, ela também é plotada, e seu
-    erro é calculado. Função privada, auxiliar da função principal lin_interp.
+    erro é calculado. O erro é mostrado no título do gráfico principal,
+    e um gráfico secundário é plotado, mostrando o erro absoluto. Função
+    privada, auxiliar da função principal lin_interp.
 
     Args:
         x: lista das coordenadas x, em x[i], de cada ponto i.
@@ -89,24 +91,38 @@ def _plotar(x: list,
         None
     """
     x_points = np.linspace(x[0], x[-1], 500)
-    y_points = [f(xp) for xp in x_points]
+    y_points = np.array([f(xp) for xp in x_points])
 
-    _, ax = plt.subplots()
+    if f_ideal: # Caso exista uma função ideal, o erro médio é calculado e mostrado na plotagem
+        _, (ax, ax_err) = plt.subplots(
+            2, 1, 
+            figsize=(10, 10), 
+            gridspec_kw={'height_ratios': [2, 1]},
+            sharex=True # Compartilha o eixo x
+        )
+        
+        y_ideal = np.array([f_ideal(xp) for xp in x_points])
+        intv = [x[0], x[-1]]
+        erroMedio, erroMax = _error_pol(f, f_ideal, intv, n= 1000)
+        ax.set_title(titulo+f' - Erro Médio = {erroMedio:2.4f} - Erro Máximo = {erroMax:2.4f}')
+        ax.plot(x_points, y_ideal, color = 'k', label = 'Função ideal')
+        
+        # Cálculo e plotagem do erro absoluto no gráfico inferior (ax_err)
+        erro_absoluto = np.abs(y_ideal - y_points)
+        ax_err.plot(x_points, erro_absoluto, 'r-', label='Erro Absoluto |Real - Interp.|')
+        ax_err.set_xlabel('x')
+        ax_err.set_ylabel('Erro Absoluto')
+        ax_err.set_title('Gráfico de Erro')
+        ax_err.grid(True, alpha=0.3)
+        ax_err.legend()
+    else:
+        _, ax = plt.subplots()
+    
     ax.scatter(x, y, color = 'red', label = 'Dados')
     ax.plot(x_points, y_points, 'b-', linewidth=2, label = 'Interpolação Polinomial (Vandermonde)')
     ax.set_xlabel('x')
     ax.set_ylabel('y')
-    ax.grid(True)
-
-    if f_ideal: # Caso exista uma função ideal, o erro médio é calculado e mostrado na plotagem
-        y_ideal = [f_ideal(xp) for xp in x_points]
-        intv = [x[0], x[1]]
-        erroMedio, erroMax = _error_pol(f, f_ideal, intv, n= 1000)
-        ax.set_title(titulo+f' - Erro Médio = {erroMedio:2.4f} - Erro Máximo = {erroMax:2.4f}')
-        ax.plot(x_points, y_ideal, color = 'g', label = 'Função ideal')
-    else:
-        ax.set_title(titulo)
-    
+    ax.grid(True, alpha=0.3)
     ax.legend()
     plt.show()
 
