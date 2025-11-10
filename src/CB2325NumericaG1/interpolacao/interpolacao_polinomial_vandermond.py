@@ -16,6 +16,9 @@ def _ordenar_coordenadas(x: list, y: list) -> list:
     Returns:
         x_ord: lista das coordenadas x em ordem crescente.
         y_ord: lista das coordenadas y, pareadas com as coordenadas x.
+
+    Raises:
+        RuntimeError: caso x e y não tenham mesma quantidade de elementos.
     """
     if len(x) != len(y):
         raise RuntimeError(f"x e y devem ter a mesma quantidade de elementos")
@@ -30,19 +33,57 @@ def _ordenar_coordenadas(x: list, y: list) -> list:
 
     return x_ord, y_ord
 
+def _random_sample(intv: list, N: int) -> np.array:
+    """Cria uma amostra aleatória.
+    
+    Args:
+        intv: intervalo da amostra.
+        N: número de amostras.
+
+    Returns:
+        Lista numpy.array das amostras.
+    """
+    r = np.random.uniform(intv[0], intv[1], N-2)
+    r.sort()
+    return np.array([intv[0]] + list(r) + [intv[1]])
+
+def _error_pol(f: Callable,
+               P: Callable,
+               intv: list,
+               n: int = 1000) -> np.array:
+    """Calcula o erro médio e o erro máximo
+    
+    Args:
+        f: função analisada.
+        P: função idealizada.
+        intv: intervalo analisado.
+        n = quantidade de amostras.
+
+    Reuturns:
+        Erro médio.
+        Erro máximo.
+    """
+    x = _random_sample(intv, n)
+    error = np.abs(f(x)-P(x))
+    return np.sum(error)/n, np.max(error)
+
 def _plotar(x: list,
             y: list,
             f: Callable,
-            titulo: str = 'Gráfico'):
+            titulo: str = 'Gráfico',
+            f_ideal: Callable = None):
     """Plotagem de pontos e de uma função.
 
     Plotagem dos pontos indicados pelas coordenadas x e y, seguindo a
-    função f. Função privada, auxiliar da função principal lin_interp.
+    função f. Caso haja uma função ideal, ela também é plotada, e seu
+    erro é calculado. Função privada, auxiliar da função principal lin_interp.
 
     Args:
         x: lista das coordenadas x, em x[i], de cada ponto i.
         y: lista das coordenadas y, em y[i], de cada ponto i.
         f: função que será plotada.
+        titulo: titulo do gráfico que será plotado.
+        f_ideal: função ideal (caso tenha).
 
     Returns:
         None
@@ -55,27 +96,41 @@ def _plotar(x: list,
     ax.plot(x_points, y_points, label = 'Interpolação Polinomial (Vandermonde)')
     ax.set_xlabel('x')
     ax.set_ylabel('y')
-    ax.set_title(titulo)
     ax.grid(True)
+
+    if f_ideal: # Caso exista uma função ideal, o erro médio é calculado e mostrado na plotagem
+        y_ideal = [f_ideal(xp) for xp in x_points]
+        intv = [x[0], x[1]]
+        erroMedio, erroMax = _error_pol(f, f_ideal, intv, n= 1000)
+        ax.set_title(titulo+f' - Erro Médio = {erroMedio:2.4f} - Max Error = {erroMax:2.4f}')
+        ax.plot(x_points, y_ideal, label = 'Função ideal')
+    else:
+        ax.set_title(titulo)
+    
+    ax.legend()
     plt.show()
 
     return
 
 def vandermond_interp(x: list,
                       y: list,
-                      plot: bool = False) -> Callable:
+                      plot: bool = False,
+                      f_ideal: Callable = None) -> Callable:
     """Interpolação polinomial pelo método de Vandermonde
 
     Essa função ordena pontos a partir da ordem crescente das
     coordenadas x. Em seguida, cria matriz de Vandermonde e retorna
     a solução algébrica para, assim, conseguir os coeficientes do
-    polinômio interpolado. Por fim, caso 'plot = True', há uma
-    plotagem do gráfico correspondente.
+    polinômio interpolado. Caso haja uma função ideal, também é calculado
+    o erro, que é representado no plot. Por fim, caso 'plot = True', há uma
+    plotagem do gráfico correspondente. Por padrão, 'plot = False',
+    ou seja, por padrão não há a plotagem.
 
     Args:
         x: lista das coordenadas x, em x[i], de cada ponto i.
         y: lista das coordenadas y, em y[i], de cada ponto i.
         plot: indica se deve haver a plotagem (True) ou não (False).
+        f_ideal: função ideal, caso queira fazer comparação de erros.
 
     Returns:
         f: função de interpolação linear por partes.
@@ -109,6 +164,9 @@ def vandermond_interp(x: list,
 
     # Plotagem do gráfico correspondente à função f
     if plot:
-        _plotar(x, y, f, 'Interpolação Polinomial (Vandermonde)')
+        if f_ideal: # Caso exista uma função ideal, o erro é "plotado" no título
+            _plotar(x, y, f, 'Interpolação Polinomial (Vandermonde)', f_ideal= f_ideal)
+        else:
+            _plotar(x, y, f, 'Interpolação Polinomial (Vandermonde)')
 
     return f
