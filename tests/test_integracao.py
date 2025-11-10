@@ -1,4 +1,4 @@
-from CB2325NumericaG1.integracao import trapezio, simpson13
+from CB2325NumericaG1.integracao import trapezio, simpson13, monte_carlo_one_variable, monte_carlo_two_variables
 import math
 
 def test_trapezio_seno() :

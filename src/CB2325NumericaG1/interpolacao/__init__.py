@@ -1,3 +1,4 @@
 from .interpolacao_polinomial_hermite import hermite_interp
 from .interpolacao_linear import lin_interp
 from .interpolacao_polinomial import poly_interp
+from .interpolacao_polinomial_vandermond import vandermond_interp

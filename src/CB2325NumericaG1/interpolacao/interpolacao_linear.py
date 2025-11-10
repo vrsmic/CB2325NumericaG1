@@ -49,7 +49,7 @@ def _plotar(x: list,
 
     _, ax = plt.subplots()
     ax.scatter(x, y, color = 'red', label = 'Dados')
-    ax.plot(x_points, y_points, label = 'Interpolação Linear por Partes')
+    ax.plot(x_points, y_points,'b-', linewidth=2, label = 'Interpolação Linear por Partes')
     ax.set_xlabel('x')
     ax.set_ylabel('y')
     ax.set_title(titulo)
