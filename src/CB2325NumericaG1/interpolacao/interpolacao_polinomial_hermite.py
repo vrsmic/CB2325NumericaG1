@@ -98,7 +98,9 @@ def _ordenar_coordenadas_hermite(x: list, y: list, dy: list) -> tuple:
     return x_ord, y_ord, dy_ord
 
 
-def _plotar_hermite(x: list, y: list, dy: list, f: Callable, titulo: str = "Interpolação de Hermite"):
+def _plotar_hermite(x: list, y: list, dy: list, f: Callable, 
+                    f_real: Callable | None = None,  
+                    titulo: str = "Interpolação de Hermite"):
     """
     Função interna - Plotagem de pontos, derivadas e da função de interpolação.
 
@@ -107,6 +109,7 @@ def _plotar_hermite(x: list, y: list, dy: list, f: Callable, titulo: str = "Inte
     y: lista das coordenadas y, em y[i], de cada ponto i.
     dy: lista das derivadas dy[i] em cada ponto i.
     f: função de interpolação que será plotada.
+    f_real: (Opcional) a função verdadeira para cálculo do erro.
     titulo: título do gráfico.
 
     Retorna:
@@ -128,7 +131,31 @@ def _plotar_hermite(x: list, y: list, dy: list, f: Callable, titulo: str = "Inte
     comprimento_tangente = 0.1 * \
         (x_max - x_min) if (x_max - x_min) > 0 else 0.1
 
-    fig, ax = plt.subplots(figsize=(10, 6))
+    if f_real:
+        # Se f_real for fornecida, cria 2 subplots (um para a função, um para o erro)
+        fig, (ax, ax_err) = plt.subplots(
+            2, 1, 
+            figsize=(10, 10), 
+            gridspec_kw={'height_ratios': [2, 1]},
+            sharex=True # Compartilha o eixo x
+        )
+        
+        # Plot da função real no gráfico principal (ax)
+        y_real_curve = f_real(x_curve)
+        ax.plot(x_curve, y_real_curve, 'k:', linewidth=2, label='Função Real')
+
+        # Cálculo e plotagem do erro absoluto no gráfico inferior (ax_err)
+        erro_absoluto = np.abs(y_real_curve - y_curve)
+        ax_err.plot(x_curve, erro_absoluto, 'r-', label='Erro Absoluto |Real - Interp.|')
+        ax_err.set_xlabel('x')
+        ax_err.set_ylabel('Erro Absoluto')
+        ax_err.set_title('Gráfico de Erro')
+        ax_err.grid(True, alpha=0.3)
+        ax_err.legend()
+        
+    else:
+        # Comportamento original: apenas um gráfico
+        fig, ax = plt.subplots(figsize=(10, 6))
 
     # gráfico principal
     ax.scatter(x, y, color='red', s=50, zorder=5, label='Pontos de dados')
@@ -146,17 +173,21 @@ def _plotar_hermite(x: list, y: list, dy: list, f: Callable, titulo: str = "Inte
             tangente_plotted = True
         ax.plot(xi, yi, 'ro', markersize=8)
 
-    ax.set_xlabel('x')
     ax.set_ylabel('y')
     ax.set_title(titulo)
     ax.grid(True, alpha=0.3)
     ax.legend()
+
+    # Se não houver gráfico de erro, adiciona o label 'x' ao gráfico principal
+    if not f_real:
+        ax.set_xlabel('x')
 
     plt.tight_layout()
     plt.show()
 
 
 def hermite_interp(x_pontos: list, y_pontos: list, dy_pontos: list,
+                   f_real: Callable | None = None,
                    titulo: str = "Interpolação de Hermite",
                    plot: bool = False) -> Callable:
     """
@@ -166,6 +197,7 @@ def hermite_interp(x_pontos: list, y_pontos: list, dy_pontos: list,
         x_pontos: Coordenadas x (n valores).
         y_pontos: Coordenadas y (n valores).
         dy_pontos: Derivadas dy/dx em cada x (n valores).
+        f_real: (Opcional) A função 'verdadeira' para plotar junto e calcular o gráfico de erro.
         titulo: Título para o gráfico.
         plot: indica se deve haver a plotagem (True) ou não (False).
 
@@ -194,7 +226,7 @@ def hermite_interp(x_pontos: list, y_pontos: list, dy_pontos: list,
     # plot
     # a função de plot também vai mostrar um pouco da extrapolação
     if plot:
-        _plotar_hermite(x_ord, y_ord, dy_ord, f_interp, titulo)
+        _plotar_hermite(x_ord, y_ord, dy_ord, f_interp, f_real, titulo)
 
     # a lógica de restrição foi removida.
 
