@@ -11,34 +11,121 @@ import matplotlib.pyplot as plt
 
 ## Funções polinomiais de aproximação.
 
+# Regressão de grau N.
+def regressao(dados_x: npt.ArrayLike, dados_y: npt.ArrayLike, grau: int, plot: bool = False) -> np.ndarray:
+    """
+    Calcula os coeficientes de uma regressão polinomial usando Mínimos Quadrados.
+
+    Esta função ajusta um polinômio de grau 'grau' (y = ... + c_1*x + c_0)
+    aos dados, resolvendo o sistema de mínimos quadrados lineares
+    A * c = y usando 'np.linalg.lstsq'.
+
+    Args:
+        dados_x (npt.ArrayLike): 
+            Vetor contendo os valores da variável independente.
+        dados_y (npt.ArrayLike): 
+            Vetor contendo os valores da variável dependente.
+        grau (int): 
+            O grau (d) do polinômio a ser ajustado.
+        plot (bool, optional): 
+            Se `True`, exibe o gráfico dos dados e da curva de regressão.
+            Padrão é `False`.
+
+    Returns:
+        np.ndarray: 
+            Um array numpy contendo os coeficientes do polinômio.
+            IMPORTANTE: Os coeficientes são retornados da menor potência
+            para a maior (ex: [c_0, c_1, ..., c_grau]).
+
+    Raises:
+        ValueError: 
+            Se 'dados_x' e 'dados_y' tiverem comprimentos diferentes.
+        np.linalg.LinAlgError: 
+            Pode ser levantado por 'np.linalg.lstsq' se a matriz
+            for singular ou houver problemas numéricos.
+
+    Dependencies:
+        - `numpy` (importado como `np`)
+        - `matplotlib.pyplot` (importado como `plt`) - Se plot=True
+
+    Notes:
+        - A função 'np.linalg.lstsq' é uma forma robusta de resolver
+          o problema de mínimos quadrados, geralmente usando decomposição
+          SVD ou QR por baixo dos panos.
+        - A ordem dos coeficientes retornados ([c_0, c_1, ...]) é o
+          inverso da ordem usada por 'np.polyfit' ([... c_1, c_0]).
+    """
+
+    if len(dados_x) != len(dados_y):
+        raise ValueError("Os dados de x e y devem ter o mesmo comprimento.")
+
+    dados_x = np.asarray(dados_x)
+    dados_y = np.asarray(dados_y)
+
+    # Constrói a Matriz de Design (Vandermonde).
+    A = np.vstack([dados_x**i for i in range(grau + 1)]).T
+
+    # Resolve o problema de mínimos quadrados A*c = y para c.
+    coeficientes, restos, rank, singulares = np.linalg.lstsq(A, dados_y, rcond=None)
+
+    if plot:
+        # Gera pontos para a linha de ajuste
+        x_fit = np.linspace(dados_x.min(), dados_x.max(), 500)
+        
+        # Como os nossos estão da menor para a maior, usamos [::-1].
+        y_fit = np.polyval(coeficientes[::-1], x_fit)
+
+        plt.figure(figsize=(10, 6))
+        plt.scatter(dados_x, dados_y, marker='.', color='blue', label='Dados', alpha=1)
+
+        plt.plot(x_fit, y_fit, 'r-', label=f'Ajuste Polinomial (Grau {grau})', linewidth=2)
+        plt.title(f'Aproximação Polinomial de Grau {grau} via Mínimos Quadrados')
+        plt.xlabel('X')
+        plt.ylabel('Y')
+        plt.legend()
+        plt.grid(True)
+        plt.show()
+
+    return coeficientes
+
 # Regressão Linear.
-# ----------------------------------------------------------------------
 def regressao_linear(x: npt.ArrayLike, y: npt.ArrayLike, plot: bool = False) -> tuple[float, float]:
     """
-    Calcula o coeficiente angular 'a' e o coeficiente linear 'b' de uma regressão linear simples (y = ax + b).
+    Calcula o coeficiente angular 'a' e o coeficiente linear 'b'
+    de uma regressão linear simples (y = ax + b).
 
-    A regressão é realizada utilizando o Método dos Mínimos Quadrados Ordinários (MQO).
+    Args:
+        x (npt.ArrayLike): 
+            Vetor contendo os valores da variável independente.
+        y (npt.ArrayLike): 
+            Vetor contendo os valores da variável dependente.
+        plot (bool, optional): 
+            Se `True`, exibe o gráfico dos dados e da linha de regressão. 
+            Padrão é `False`. (Este argumento foi inferido da 
+            função `regressao_logaritmica`, mas não estava
+            na sua docstring original da linear).
 
-    Parâmetros:
-    ----------
-    x : Vetor contendo os valores da variável independente.
-    y : Vetor contendo os valores da variável dependente.
+    Returns:
+        tuple[float, float]: 
+            Uma tupla contendo (a, b), onde:
+            a (float): Coeficiente angular da linha de regressão.
+            b (float): Coeficiente linear da linha de regressão.
 
-    Retorna:
-    -------
-    tuple
-        Uma tupla contendo (a, b), onde:
-        a (float): Coeficiente angular da linha de regressão.
-        b (float): Coeficiente linear da linha de regressão.
+    Raises:
+        ValueError: 
+            Se 'x' e 'y' tiverem comprimentos diferentes ou se
+            tiverem menos de 2 pontos de dados, o que é insuficiente
+            para a regressão.
 
-    Levanta:
-    -------
-    ValueError: Se 'x' e 'y' tiverem comprimentos diferentes ou se tiverem menos de 2 pontos de dados, o que é insuficiente para a regressão.
+    Dependencies:
+        - `numpy` (importada como `np`)
+        - `matplotlib.pyplot` (importada como `plt`) - Se plot=True
 
-    Dependências:
-    ------------
-    - É necessário ter a biblioteca `numpy` (importada como `np`).
+    Notes:
+        - A regressão é realizada utilizando o Método dos Mínimos
+          Quadrados Ordinários (MQO).
     """
+
     # Converte as entradas para arrays numpy para garantir que o resto do código opere de forma consistente.
     x = np.asarray(x)
     y = np.asarray(y)
@@ -98,43 +185,50 @@ def regressao_linear(x: npt.ArrayLike, y: npt.ArrayLike, plot: bool = False) -> 
     return a, b
 
 # Regressão logarítimica.
-# ----------------------------------------------------------------------
 def regressao_logaritmica(x: npt.ArrayLike, y: npt.ArrayLike, plot: bool = False) -> tuple[float, float]:
     """
-    Calcula os coeficientes 'a' e 'b' de uma regressão logarítmica do tipo (y = a * ln(x) + b), e 
-    optacionalmente, plota a função de regressão.
+    Calcula os coeficientes 'a' e 'b' de uma regressão logarítmica
+    do tipo (y = a * ln(x) + b) e, opcionalmente, plota a função.
 
-    Este método funciona transformando a variável preditora 'x', aplicando o logaritmo natural (ln),
-    depois utilizando a função 'regressao_linear' padrão nos dados transformados -> (ln(x), y).
+    Args:
+        x (npt.ArrayLike): 
+            Vetor contendo os valores da variável independente.
+            IMPORTANTE: Todos os valores de 'x' devem ser estritamente
+            positivos (x > 0), pois o logaritmo de valores
+            negativos ou zero não é definido.
+        y (npt.ArrayLike): 
+            Vetor contendo os valores da variável dependente.
+        plot (bool, optional): 
+            Se `True`, exibe o gráfico dos dados e da curva de regressão. 
+            Padrão é `False`.
 
-    Parâmetros:
-    ----------
-    x: Vetor contendo os valores da variável independente.
-    IMPORTANTE: Todos os valores de 'x' devem ser estritamente positivos (x > 0), pois o logarítmo de valores negativos não é definido.
-    
-    y: Vetor contendo os valores da variável dependente.
+    Returns:
+        tuple[float, float]: 
+            Uma tupla contendo (a, b), onde:
+            a (float): Coeficiente 'a' que multiplica o termo ln(x).
+            b (float): Coeficiente 'b' (intercepto) da linha de regressão.
 
-    plot (bool, opcional): Se True, gera um gráfico comparando a função original e o polinômio de Taylor. Por padrão é False.
+    Raises:
+        ValueError: 
+            - Herdado da função 'regressao_linear': Se 'x' e 'y'
+              tiverem comprimentos diferentes.
+            - Herdado da função 'regressao_linear': Se tiverem menos
+              de 2 pontos de dados.
+            - Se 'x' contiver valores menores ou iguais a zero.
+        RuntimeWarning: 
+            Pode ser levantado pelo `numpy` se 'x' contiver valores
+            menores ou iguais a zero, resultando em 'NaN' ou '-inf'
+            (embora um ValueError seja levantado primeiro por esta função).
 
-    Retorna:
-    -------
-    tuple
-        Uma tupla contendo (a, b), onde:
-        a (float): Coeficiente 'a' que multiplica o termo ln(x).
-        b (float): Coeficiente 'b' (intercepto) da linha de regressão.
-    
-    Plot (Opcional): Plot dos pontos e da função aproximadora.
-    
-    Levanta:
-    -------
-    ValueError
-        Herdado da função 'regressao_linear':
-        - Se 'x' e 'y' tiverem comprimentos diferentes.
-        - Se tiverem menos de 2 pontos de dados.
-    RuntimeWarning
-        Pode ser levantado pelo `numpy` se 'x' contiver valores
-        menores ou iguais a zero, resultando em 'NaN' ou '-inf'.
+    Notes:
+        - Este método funciona transformando a variável preditora 'x'
+          aplicando o logaritmo natural (ln), e depois utilizando
+          a função 'regressao_linear' padrão nos dados transformados
+          (ln(x), y).
+        - O plot (opcional) mostra os pontos de dados e a função
+          aproximadora.
     """
+
     # Converte as entradas para arrays numpy para garantir que o resto do código opere de forma consistente.
     x = np.asarray(x)
     y = np.asarray(y)
@@ -185,41 +279,43 @@ def regressao_logaritmica(x: npt.ArrayLike, y: npt.ArrayLike, plot: bool = False
     return a, b
 
 # Polinômio de Taylor.
-# ----------------------------------------------------------------------
 def polinomio_de_taylor(function: sp.Expr, x_symbol: sp.Symbol, point: float, times: int, plot: bool = False)-> sp.Expr:
     """
     Calcula, imprime e opcionalmente plota o Polinômio de Taylor
     para uma dada função em torno de um ponto.
 
-    Esta função utiliza a biblioteca SymPy para realizar a
-    diferenciação simbólica e a construção do polinômio.
+    Args:
+        function (sp.Expr): 
+            A expressão simbólica da função que será aproximada.
+        x_symbol (sp.Symbol): 
+            O símbolo em relação ao qual o polinômio será construído
+            e as derivadas calculadas.
+        point (float): 
+            O ponto de expansão 'a' (o centro) em torno do qual a
+            função será aproximada. IMPORTANTE: Ponto será do eixo x.
+        times (int): 
+            O número de termos a serem usados na série. O polinômio
+            resultante terá grau 'times - 1'.
+        plot (bool, optional): 
+            Se `True`, gera um gráfico comparando a função original e
+            o polinômio de Taylor. Padrão é `False`.
 
-    Se plot = True, utiliza Numpy e Matplotlib para visualizar a aproximação.
+    Returns:
+        sympy.Expr: 
+            A expressão simbólica do Polinômio de Taylor resultante.
 
-    Parâmetros:
-    ----------
-    function (sp.Expr): A expressão simbólica da função que será aproximada.
+    Dependencies:
+        - `sympy` (importada como `sp`)
+        - `math`
+        - `numpy` (importado como `np`) - Necessário se plot=True.
+        - `matplotlib.pyplot` (importado como `plt`) - Necessário se plot=True.
 
-    x_symbol (sp.Symbol): O símbolO em relação ao qual o polinômio será construído e as derivadas calculadas.
-
-    point (float): O ponto de expansão 'a' (o centro) em torno do qual a função será aproximada. IMPORTANTE: Ponto será do eixo x.
-
-    times (int): O número de termos a serem usados na série. O polinômio resultante terá grau 'times - 1'.
-
-    plot (bool, opcional): Se True, gera um gráfico comparando a função original e o polinômio de Taylor. Por padrão é False.
-    
-    Retorna:
-    -------
-    sympy.Expr: A expressão simbólica do Polinômio de Taylor resultante.
-
-    Plot (Opcional): Plot da função e da aproximação de Taylor.
-
-    Dependências:
-    ------------
-    - É necessário ter as bibliotecas `sympy` (importada como `sp`)
-      e `math` importadas no escopo.
-      `numpy` (importado como `np`) - Necessário se plot=True.
-      `matplotlib.pyplot` (importado como `plt`) - Necessário se plot=True.
+    Notes:
+        - Esta função utiliza a biblioteca SymPy para realizar a
+          diferenciação simbólica e a construção do polinômio.
+        - Se plot = True, utiliza Numpy e Matplotlib para visualizar
+          a aproximação.
+        - O plot (opcional) mostra a função e a aproximação de Taylor.
     """
 
     # Inicia o polinômio, iremos adicionar os termos aqui depois.
@@ -297,4 +393,3 @@ def polinomio_de_taylor(function: sp.Expr, x_symbol: sp.Symbol, point: float, ti
         plt.show()
 
     return f_poly
-# ---------------------------------------------------------------------
