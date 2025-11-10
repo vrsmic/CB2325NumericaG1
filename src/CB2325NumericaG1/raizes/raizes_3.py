@@ -4,8 +4,40 @@ from typing import Callable
 
 def secante(function: Callable, guess0: float, guess1: float, tolerance: float, plot: bool = False) -> float:
     """
-    Docstrings secante
+    Encontra/aproxima uma raiz de uma função real de variável real usando o método da secante.
+
+    Calcula onde a reta secante ao gráfico da função nos pontos guess0 e guess1 cruza o eixo x.
+    Repete o processo com esse novo ponto guess2 e o ponto guess1.
+    
+    Args:
+        function (Callable):
+            Função cuja raíz queremos encontrar ou aproximar.
+        guess0 (float):
+            Primeiro chute inicial.
+        guess1 (float):
+            Segundo chute inicial.
+        tolerance (float):
+            Critério de parada.
+            O método para quando |f| < tolerance ou |dx| < tolerance.
+        plot (bool = False):
+            Determina se uma visualização gráfica do método será plotada.
+            Por padrão, não será.
+
+    Returns:
+        float:
+            Valor aproximado da raiz.
+
+    Raises:
+        ValueError:
+            Se ocorrer NaN/Inf em algum momento da iteração.
+        TypeError:
+            Se function não for Callable.
+        ZeroDivisionError:
+            Se a derivada praticamente zerar em algum momento da iteração.
+        RunTimeError:
+            Se o método não convergir em no máximo 1000 iterações.
     """
+    
     if not callable(function):
         raise TypeError("function deve ser um Callable.")
 

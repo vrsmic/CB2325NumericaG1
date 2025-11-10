@@ -19,10 +19,10 @@ def newton_raphson(function: Union[Callable, sp.Basic], guess: float, tolerance:
             Chute inicial x0.
         tolerance (float):
             Critério de parada.
-            O método para quando |f(x_n)| < tolerance ou |x_{n+1} - x_n| < tolerance.
+            O método para quando |f| < tolerance ou |dx| < tolerance.
         plot (bool = False):
             Determina se uma visualização gráfica do método será plotada.
-            Por padrão, não é.
+            Por padrão, não será.
 
     Returns:
         float:

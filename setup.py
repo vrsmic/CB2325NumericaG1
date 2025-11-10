@@ -17,8 +17,8 @@ setup(
     #informacoes sobre a biblioteca
     #esses campos sao opcionais, ai cada um bota seu nome e email (se quiser)
     description="Uma biblioteca de cálculo numérico (teste).",
-    author="Lucas F. Damasceno, ...",
-    author_email="damasceno.lucas512@gmail.com, ...",
+    author="Lucas F. Damasceno, Cauan C. R. Dutra, ...",
+    author_email="damasceno.lucas512@gmail.com, al.cauan.dutra@impatech.edu.br,...",
     project_urls={
         #o link do github do projeto
         "Código fonte": "https://github.com/vrsmic/CB2325NumericaG1",
