@@ -20,12 +20,14 @@ def _poly_interp_plotter(x_val: list,
             lista das coordenadas y.
         P : Callable
             função que corresponde ao polinômio interpolador.
-        res : int = 100, optional
+        res : int
             número de pontos para a plotagem do polinômio.
-        pcolor : str = "#234883", optional
+        pcolor : str
             cor dos pontos originais.
-        ccolor : str = "#4287f5", optional
-            cor do polinômio.
+        ccolor : str
+            cor da curva (polinômio interpolador).
+        titulo : str
+            título do gráfico (string
 
     Returns
     -------
