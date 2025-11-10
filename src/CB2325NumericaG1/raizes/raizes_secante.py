@@ -89,7 +89,54 @@ def secante(function: Callable, guess0: float, guess1: float, tolerance: float, 
         f_last = float(f(x_curr))
         raise RuntimeError(f"Não convergiu após {MAX_ITERS} iterações. Último x = {x_curr}, f(x) = {f_last}")
     
+    # Visualização Gráfica
     if plot:
-        pass
+        if len(x_record) > 1:
+            x_min = min(x_record)
+            x_max = max(x_record)
+            delta = (x_max - x_min) * 0.1 if x_max > x_min else 1.0
+            x_min -= delta
+            x_max += delta
+        else:
+            x_min = x_record[0] - 1.0
+            x_max = x_record[0] + 1.0
+
+        # Cria um range denso para plotar a curva da função
+        x_space = np.linspace(x_min, x_max, 400)
+        y_space = f(x_space)
+
+        # Plota a função original
+        plt.plot(x_space, y_space, color='black', linewidth=1.2, label='f(x)')
+
+        # Pontos de iteração
+        x_points = np.array(x_record)
+        y_points = f(x_points)
+        plt.plot(x_points, y_points, 'ro', label='Pontos de iteração', zorder=3)
+
+        # Desenha as secantes
+        for j in range(len(x_record) - 1):
+            x0, y0 = x_record[j], f(x_record[j])
+            x1, y1 = x_record[j + 1], f(x_record[j + 1])
+
+            # Coeficiente angular e intercepto da secante
+            m = (y1 - y0) / (x1 - x0)
+            b = y1 - m * x1
+
+            # Extensão da linha (até cruzar o eixo x)
+            x_line = np.linspace(min(x0, x1), max(x0, x1), 10)
+            y_line = m * x_line + b
+
+            plt.plot(x_line, y_line, 'b--', linewidth=0.8, label='Secante' if j == 0 else None)
+
+        # Plota o eixo x.
+        plt.axhline(0, color='gray', linewidth=1)
+
+        # Ajustes visuais
+        plt.grid(True, linestyle='--', alpha=0.6)
+        plt.title("Raízes da função pelo Método da Secante")
+        plt.xlabel("x")
+        plt.ylabel("f(x)")
+        plt.legend()
+        plt.show()
     
     return root

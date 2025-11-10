@@ -140,6 +140,7 @@ def newton_raphson(function: Union[Callable, sp.Basic], guess: float, tolerance:
         # Configuração do gráfico
         plt.axis('equal')
         plt.title("Raízes da função pelo Método de Newton-Raphson")
+        plt.grid(True, linestyle='--', alpha=0.6)
         plt.xlabel("x")
         plt.ylabel("f(x)")
         plt.legend()
