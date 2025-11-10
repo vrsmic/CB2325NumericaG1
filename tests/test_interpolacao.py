@@ -1,5 +1,5 @@
 from CB2325NumericaG1.interpolacao import lin_interp, hermite_interp, poly_interp, vandermond_interp
-from pytest import approx
+from pytest import approx, raises
 
 def test_lin_interp():
     """Teste da função lin_interp.
@@ -33,32 +33,32 @@ def test_poly_interp():
     y = [1, 3, 2]
     p = poly_interp(x, y)
 
-    assert p(1.5) == pytest.approx(2.875)
-    assert p(2.75) == pytest.approx(-0.71875)
-    assert p(0.2) == pytest.approx(1.64)
+    assert p(1.5) == approx(2.875)
+    assert p(2.75) == approx(-0.71875)
+    assert p(0.2) == approx(1.64)
     # exemplo do PDF de instruções
     x_pdf = [0, 1, 2, 3]
     y_pdf = [1, 2, 0, 4]
     p = poly_interp(x_pdf, y_pdf)
-    assert p(1.5) == pytest.approx(0.8125)
+    assert p(1.5) == approx(0.8125)
 
     # testes de tratamento de erros
     # valores de x com duplicatas
     x_dup = [0, 1, 2, 2]
     y_dup = [1, 2, 3, 4]
-    with pytest.raises(ValueError):
+    with raises(ValueError):
         poly_interp(x_dup, y)
     
     # listas com tamanhos diferentes
     x_diff = [0, 1, 2]
     y_diff = [1, 2, 3, 4]
-    with pytest.raises(ValueError):
+    with raises(ValueError):
         poly_interp(x_diff, y_diff)
     
     # listas vazias
     x_empty = []
     y_empty = []
-    with pytest.raises(ValueError):
+    with raises(ValueError):
         poly_interp(x_empty, y_empty)
 
 def test_vandermond_interp():
