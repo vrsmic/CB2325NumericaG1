@@ -17,6 +17,7 @@ def _ordenar_coordenadas(x: list, y: list) -> list:
         x_ord: lista das coordenadas x em ordem crescente.
         y_ord: lista das coordenadas y, pareadas com as coordenadas x.
     """
+    
     x_np = np.array(x)
     y_np = np.array(y)
 
@@ -43,7 +44,9 @@ def _plotar(x: list,
 
     Returns:
         None
+    Raises:
     """
+    
     x_points = np.linspace(x[0], x[-1], 500)
     y_points = [f(xp) for xp in x_points]
 
@@ -77,7 +80,26 @@ def lin_interp(x: list,
 
     Returns:
         f: função de interpolação linear por partes
+    Raises:
+        ValueError: Caso 'x' e 'y' tenham tamanhos diferentes, caso as listas
+        estejam vazias, ou caso as coordenadas em 'x' não sejam distintas.
+        TypeError: caso 'x' ou 'y' não sejam listas, ou caso 'plot não seja bool'.
     """
+    # Tratamento de erros
+    try:
+        n = len(x)
+        m = len(y)
+    except:
+        raise TypeError("Os argumentos 'x' e 'y' devem ser listas.")
+    if plot is not bool:
+        raise TypeError("O argumento 'plot' deve ser bool")
+    
+    if n != m:
+        raise ValueError("As listas de coordenadas x e y devem ter o mesmo tamanho.")
+    if n == 0:
+        raise ValueError("As listas x e y não podem estar vazias.")
+    if len(set(x)) != n:
+        raise ValueError("As coordenadas x devem ser todas distintas.")
 
     # Ordenação das coordenadas x em ordem crescente
     x, y = _ordenar_coordenadas(x, y)
