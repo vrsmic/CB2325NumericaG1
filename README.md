@@ -10,15 +10,13 @@ A documentação completa pode ser encontrada em: [link da documentacao]
 
 _Autores_
 - Alexander Kahleul
-- Cauan Carlos Dutra
-- Juan Martins
-- Luana Fagundes
-- Luana Mognon
-- Lucas Fraga
-- Mariana Yoshioka
-- Mateus Galvão
-- Micaele Brandão
-- Rafael Almeida
-- Ryan Carvalho
-
-
+- Cauan Carlos Rodrigues Dutra
+- Juan Martins Santos
+- Luana Fagundes De Lima
+- Luana Mognon Da Silva
+- Lucas Fraga Damasceno
+- Mariana Tiemi Yoshioka
+- Mateus Stacoviaki Galvão
+- Micaele Magalhães Brandão Veras
+- Rafael Augusto De Almeida
+- Ryan Carvalho Pereira Dos Santos
