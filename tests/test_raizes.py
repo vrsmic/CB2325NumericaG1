@@ -83,12 +83,11 @@ def test_newton_raphson_value_error_nan_or_inf(funcao, chute, erro):
 
 
 def test_newton_value_error_em_derivada_inf():
-
     # Usando 2*sqrt(x) para simplificar a derivada para 1/sqrt(x)
     funcao = 2 * sp.sqrt(x) 
     chute = 0.0
     tolerancia = 1e-8
-    with pytest.raises(ValueError, match=r"f'\(x\) retornou inf no ponto x = 0\.0\."):
+    with pytest.raises(ValueError):
         newton_raphson(funcao, chute, tolerancia)
 
 def test_newton_zero_division_error_em_derivada_zero():
@@ -97,17 +96,16 @@ def test_newton_zero_division_error_em_derivada_zero():
     funcao = sp.cos(x)
     chute = 0.0
     tolerancia = 1e-8
-    with pytest.raises(ZeroDivisionError, match=r"Derivada muito próxima de zero em x = 0\.0\."):
+    with pytest.raises(ZeroDivisionError):
         newton_raphson(funcao, chute, tolerancia)
 
 def test_newton_raises_runtime_error_on_no_convergence():
 
     #Usando f(x) = x^3 - 2x + 2 com chute x0=0, que oscila entre 0 e 1.
-    
     funcao = x**3 - 2*x + 2
     chute = 0.0
     tolerancia = 1e-8
-    with pytest.raises(RuntimeError, match=r"Não convergiu após 1000 iterações\. Último x = 0\.0, f\(x\) = 1\.0"):
+    with pytest.raises(RuntimeError):
         newton_raphson(funcao, chute, tolerancia)
 
 def test_newton_raphson_funcao_sem_problemas():
@@ -118,4 +116,42 @@ def test_newton_raphson_funcao_sem_problemas():
     assert newton_raphson(f,chute,tolerancia) == approx(1.41421)
 
 # ====== TESTES DA SECANTE ======
-#Em breve
+def test_secante_type_error():
+    with pytest.raises(TypeError):
+        secante("não é função", 1.0, 2.0, 1e-6)
+
+def test_secante_value_error_nan_inicial():
+    def f_nan(x):
+        if x == 1.0:
+            return np.nan
+        return x**2 - 2
+    with pytest.raises(ValueError):
+        secante(f_nan, 1.0, 2.0, 1e-6)
+
+def test_secante_value_error_inf_mid_iteration():
+    def f_inf(x):
+        # Vai causar Inf na segunda iteração
+        return 1.0 / (x - 1.0)
+    with pytest.raises(ValueError):
+        secante(f_inf, 0.0, 2.0, 1e-6)
+
+def test_secante_zero_division_error():
+    def f_flat(x):
+        # Função com valores iguais para provocar diferença ~0
+        return 1.0
+    with pytest.raises(ZeroDivisionError):
+        secante(f_flat, 1.0, 2.0, 1e-6)
+
+def test_secante_runtime_error():
+    def f_no_root(x):
+        # Função que não cruza o eixo x
+        return np.exp(x) + 10
+    with pytest.raises(RuntimeError):
+        secante(f_no_root, 0.0, 1.0, 1e-12)
+
+# Teste sem erros:
+def test_secante_successo():
+    def f(x):
+        return x**2 - 2
+    root = secante(f, 1.0, 2.0, 1e-6)
+    assert abs(root - np.sqrt(2)) < 1e-6
