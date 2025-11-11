@@ -7,26 +7,56 @@ def test_lin_interp():
     Verificação da linearidade da função em cada intervalo de interpolação.
     Logo, se x em (1,2), y varia de 2 a 0, então para 1.5 (meio do caminho), o
     valor esperado é 2/2 = 1.0; e assim por diante.
+    Tratamento de erros.
     """
     p = lin_interp([0, 1, 2, 3], [1, 2, 0, 4])
     assert p(1.5) == approx(1.0)
     assert p(2.75) == approx(3.0)
     assert p(0.2) == approx(1.2)
 
+    # testes de tratamento de erros
+    # valores de x com duplicatas
+    x_dup = [0, 1, 2, 2]
+    y_dup = [1, 2, 3, 4]
+    with raises(ValueError):
+        poly_interp(x_dup, y_dup)
+    
+    # listas com tamanhos diferentes
+    x_diff = [0, 1, 2]
+    y_diff = [1, 2, 3, 4]
+    with raises(ValueError):
+        poly_interp(x_diff, y_diff)
+    
+    # listas vazias
+    x_empty = []
+    y_empty = []
+    with raises(ValueError):
+        poly_interp(x_empty, y_empty)
+
 def test_hermite_interp():
     """Teste da função hermite_interp.
 
     Teste da função y = x^2. Esperado que p(x) == x^2. Note que p'(x) = 2*x
-    (terceira entrada de hermite_interp)
+    (terceira entrada de hermite_interp).
+    Teste da função y = x^3 - 2x^2. Esperado que p(x) == x^3 - 2x^2. Note que
+    p'(x) = 3x^2 - 4x (terceira entrada de hermite_interp).
     """
     p = hermite_interp([-2, -1, 0, 1, 2], [4, 1, 0, 1, 4], [-4, -2, 0, 2, 4])
     assert p(3) == approx(9)
     assert p(2.5) == approx(6.25)
 
+    p = hermite_interp([-2, -1, 0, 1, 2],
+                    [-16, -3, 0, -1, 0],
+                    [20, 7, 0, -1, 4],
+                       plot= True)
+    assert p(1.5) == approx(1.125)
+    assert p(3) == approx(9)
+
 def test_poly_interp():
     """Teste da função poly_interp.
     
-    Teste da função padrão dada no documento Trabalho_de_Grupo_cb23_2025.pdf
+    Teste da função padrão dada no documento Trabalho_de_Grupo_cb23_2025.pdf. 
+    Tratamento de erros.
     """
     # testes se a função retorna valores numéricos esperados
     x = [0, 1, 2]
@@ -66,7 +96,34 @@ def test_vandermond_interp():
     """Teste da função vandermond_interp.
     
     Teste da função y = x^2. Esperado que p(x) == x^2.
+    Teste da função y = x^3 - 2x^2. Esperado que p(x) == x^3 - 2x^2
+    Tratamento de erros.
     """
     p = vandermond_interp([-2, -1, 0, 1, 2], [4, 1, 0, 1, 4])
     assert p(3) == approx(9)
     assert p(2.5) == approx(6.25)
+
+    p = vandermond_interp([-2, -1, 0, 1, 2],
+                    [-16, -3, 0, -1, 0],
+                    plot= True)
+    assert p(1.5) == approx(1.125)
+    assert p(3) == approx(9)
+
+    # testes de tratamento de erros
+    # valores de x com duplicatas
+    x_dup = [0, 1, 2, 2]
+    y_dup = [1, 2, 3, 4]
+    with raises(ValueError):
+        poly_interp(x_dup, y_dup)
+    
+    # listas com tamanhos diferentes
+    x_diff = [0, 1, 2]
+    y_diff = [1, 2, 3, 4]
+    with raises(ValueError):
+        poly_interp(x_diff, y_diff)
+    
+    # listas vazias
+    x_empty = []
+    y_empty = []
+    with raises(ValueError):
+        poly_interp(x_empty, y_empty)
