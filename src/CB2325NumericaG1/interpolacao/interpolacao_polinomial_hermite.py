@@ -11,12 +11,12 @@ def _hermite_interp_mat(x_pontos: list, y_pontos: list, dy_pontos: list) -> Call
     retorna a função polinomial (Callable) que pode ser usada 
     para calcular valores.
 
-    Parâmetros:
+    Args:
         x_pontos: Coordenadas x (n valores).
         y_pontos: Coordenadas y (n valores).
         dy_pontos: Derivadas dy/dx em cada x (n valores)."
 
-    Retorna:
+    Returns:
         Uma função (Callable) que avalia o polinômio, ou None se der erro.
     """
     try:
@@ -75,12 +75,12 @@ def _ordenar_coordenadas_hermite(x: list, y: list, dy: list) -> tuple:
     """
     Função interna - Ordena as coordenadas mantendo 'pareamento' para Hermite.
 
-    Parâmetros:
+    Args:
     x: lista das coordenadas x, em x[i], de cada ponto i.
     y: lista das coordenadas y, em y[i], de cada ponto i.
     dy: lista das derivadas dy[i] em cada ponto i.
 
-    Retorna:
+    Returns:
     x_ord: lista das coordenadas x em ordem crescente.
     y_ord: lista das coordenadas y, pareadas com as coordenadas x.
     dy_ord: lista das derivadas, pareadas com as coordenadas x.
@@ -104,7 +104,7 @@ def _plotar_hermite(x: list, y: list, dy: list, f: Callable,
     """
     Função interna - Plotagem de pontos, derivadas e da função de interpolação.
 
-    Parâmetros:
+    Args:
     x: lista das coordenadas x, em x[i], de cada ponto i.
     y: lista das coordenadas y, em y[i], de cada ponto i.
     dy: lista das derivadas dy[i] em cada ponto i.
@@ -112,7 +112,7 @@ def _plotar_hermite(x: list, y: list, dy: list, f: Callable,
     f_real: (Opcional) a função verdadeira para cálculo do erro.
     titulo: título do gráfico.
 
-    Retorna:
+    Returns:
     None
     """
     # criar pontos para a curva suave
@@ -190,7 +190,7 @@ def hermite_interp(x_pontos: list, y_pontos: list, dy_pontos: list,
     """
     Cria e plota uma função de interpolação polinomial de Hermite.
 
-    Parâmetros:
+    Args:
         x_pontos: Coordenadas x (n valores).
         y_pontos: Coordenadas y (n valores).
         dy_pontos: Derivadas dy/dx em cada x (n valores).
@@ -198,11 +198,11 @@ def hermite_interp(x_pontos: list, y_pontos: list, dy_pontos: list,
         titulo: Título para o gráfico.
         plot: indica se deve haver a plotagem (True) ou não (False).
 
-    Retorna:
+    Returns:
         Função de interpolação de Hermite.
         Se f_real for fornecida, imprime o erro médio e máximo
 
-    Notas:
+    Notes:
         Sobre a Extrapolação:
         Esta função sempre permite a extrapolação (avaliar valores de x 
         fora do intervalo de dados [min(x_pontos), max(x_pontos)]). 
@@ -225,7 +225,5 @@ def hermite_interp(x_pontos: list, y_pontos: list, dy_pontos: list,
     # a função de plot também vai mostrar um pouco da extrapolação
     if plot:
         _plotar_hermite(x_ord, y_ord, dy_ord, f_interp, f_real, titulo)
-
-    # a lógica de restrição foi removida.
 
     return f_interp
