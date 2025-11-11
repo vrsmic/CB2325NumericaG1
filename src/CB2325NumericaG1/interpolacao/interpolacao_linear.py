@@ -91,7 +91,7 @@ def lin_interp(x: list,
         m = len(y)
     except:
         raise TypeError("Os argumentos 'x' e 'y' devem ser listas.")
-    if plot is not bool:
+    if type(plot) != bool:
         raise TypeError("O argumento 'plot' deve ser bool")
     
     if n != m:
