@@ -1,28 +1,23 @@
 # .readthedocs.yaml
-# Read the Docs configuration file
-# See https://docs.readthedocs.io/en/stable/config-file/v2.html for details
-
-# Required
+# Configuração do Read the Docs
 version: 2
 
-# Set the version of Python and other tools you might need
+# Define o ambiente de build
 build:
   os: ubuntu-22.04
   tools:
     python: "3.10"
 
-# Tell Read the Docs that your documentation is in the "docs/" folder
+# Diz ao Sphinx onde está o arquivo de configuração
 sphinx:
    configuration: docs/source/conf.py
 
-# Tell Read the Docs how to install your project and its dependencies
+# Define como instalar as dependências e o pacote
 python:
-   # Install dependencies from our "shopping list"
-   requirements: docs/requirements.txt
-   
-   # Install our package itself in editable mode
-   install:
-     - method: pip
-       path: .
-       extra_requirements:
-         - docs
+  install:
+    # 1. Instala as dependências da documentação (Sphinx, etc)
+    - requirements: docs/requirements.txt
+    
+    # 2. Instala o nosso pacote em si (para que o Sphinx possa importá-lo)
+    - method: pip
+      path: .
