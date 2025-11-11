@@ -6,7 +6,7 @@ A biblioteca oficial está no PyPI e pode ser instalada com [ainda n]
 
 A biblioteca implementa, em python, diversos métodos de erro, aproximação, integração, interpolação e busca de raízes de equações.
 
-A documentação completa pode ser encontrada em: [\[link da documentacao\]](https://cb2325numericag1.readthedocs.io/pt-br/latest/)
+A documentação completa pode ser encontrada em: \[link da documentacao\](https://cb2325numericag1.readthedocs.io/pt-br/latest/)
 
 _Autores_
 - Alexander Kahleul
