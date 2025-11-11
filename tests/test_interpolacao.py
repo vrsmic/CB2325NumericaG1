@@ -47,9 +47,8 @@ def test_hermite_interp():
 
     p = hermite_interp([-2, -1, 0, 1, 2],
                     [-16, -3, 0, -1, 0],
-                    [20, 7, 0, -1, 4],
-                       plot= True)
-    assert p(1.5) == approx(1.125)
+                    [20, 7, 0, -1, 4])
+    assert p(1.5) == approx(-1.125)
     assert p(3) == approx(9)
 
 def test_poly_interp():
@@ -104,9 +103,8 @@ def test_vandermond_interp():
     assert p(2.5) == approx(6.25)
 
     p = vandermond_interp([-2, -1, 0, 1, 2],
-                    [-16, -3, 0, -1, 0],
-                    plot= True)
-    assert p(1.5) == approx(1.125)
+                    [-16, -3, 0, -1, 0])
+    assert p(1.5) == approx(-1.125)
     assert p(3) == approx(9)
 
     # testes de tratamento de erros
