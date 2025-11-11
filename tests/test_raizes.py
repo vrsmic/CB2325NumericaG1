@@ -1,0 +1,121 @@
+# Biblioteca padrão
+import math
+
+# Bibliotecas externas
+import numpy as np
+import matplotlib.pyplot as plt
+import sympy as sp
+import pytest
+from typing import Callable, Union
+from pytest import approx
+
+# Funções a serem testadas
+from CB2325NumericaG1.raizes import bissecao, newton_raphson, secante
+
+# ====== TESTES DA BISSEÇÃO ======
+
+def test_bissecao_funcao_seno():
+    f = lambda x: np.sin(x)
+    limite_inferior = 1
+    limite_superior = 6
+    tolerancia = 1e-7
+    assert bissecao(f, limite_inferior, limite_superior, tolerancia, plot=False) == 3.1416
+
+def test_bissecao_exponencial():
+    f = lambda x: np.exp(x) - 2
+    limite_inferior = 0
+    limite_superior = 1
+    tolerancia = 1e-8
+    assert bissecao(f, limite_inferior, limite_superior, tolerancia) == 0.6931
+
+def test_bissecao_funcao_impropria_para_o_metodo():
+    f = lambda x: x**2
+    limite_inferior = -2
+    limite_superior = 2
+    tolerancia = 1e-8
+    
+    with pytest.raises(ValueError, match="A função não tem sinais opostos nos limites do intervalo."):
+        bissecao(f,limite_inferior,limite_superior,tolerancia)
+
+def test_bissecao_tolerancia_menor_que_zero():
+    f = lambda x: np.sin(x)
+    limite_inferior = 1
+    limite_superior = 6
+    tolerancia = 0
+
+    with pytest.raises(ValueError,match="Valor de tolerância inválido."):
+        bissecao(f, limite_inferior, limite_superior,tolerancia)
+
+# ====== TESTES DE NEWTON-RAPHSON ======
+x = sp.symbols('x')
+y = sp.symbols('y')
+
+def test_newton_raphson_funcao_com_mais_de_uma_variavel():
+    f = sp.sympify("sin(x) + cos(y)")
+    chute = 2
+    tolerância = 1e-12
+
+    with pytest.raises(ValueError,match= r"A expressão SymPy deve ter exatamente uma variável, mas foram encontradas 2: .*"):
+        newton_raphson(f,chute,tolerância)
+
+def test_newton_raphson_funcao_de_tipo_incorreto():
+    f = 'sin(x) + con(y)'
+    chute = 2
+    tolerancia = 1e-12
+
+    with pytest.raises(TypeError, match="function deve ser Callable ou sp.Basic."):
+        newton_raphson(f,chute,tolerancia)
+
+casos_de_teste_nan_inf = [(lambda x: np.log(x)-10, 5.0, r"f\(x\) retornou nan no ponto x = 5\.0\."), #Caso 1
+                          (sp.log(x), 0.0, r"f\(x\) retornou -inf no ponto x = 0\.0\."), #Caso 2
+                          (lambda x: np.divide(1.0, x), 0.0, r"f\(x\) retornou inf no ponto x = 0\.0\." ) #Caso 3
+                          ]
+# Caso 1: resultará em np.log(-5) -> NaN
+# Caso 2: resultará em np.log(0) -> -inf
+# Caso 3: resultará em 1.0/0.0 -> inf
+
+@pytest.mark.parametrize("funcao, chute, erro", casos_de_teste_nan_inf)
+
+def test_newton_raphson_value_error_nan_or_inf(funcao, chute, erro):
+
+    with pytest.raises(ValueError, match=erro):
+        newton_raphson(function=funcao, guess=chute, tolerance=1e-8)
+
+
+def test_newton_value_error_em_derivada_inf():
+
+    # Usando 2*sqrt(x) para simplificar a derivada para 1/sqrt(x)
+    funcao = 2 * sp.sqrt(x) 
+    chute = 0.0
+    tolerancia = 1e-8
+    with pytest.raises(ValueError, match=r"f'\(x\) retornou inf no ponto x = 0\.0\."):
+        newton_raphson(funcao, chute, tolerancia)
+
+def test_newton_zero_division_error_em_derivada_zero():
+
+    #Usando f(x) = cos(x), cuja derivada f'(x) = -sin(x) é 0 em x=0.
+    funcao = sp.cos(x)
+    chute = 0.0
+    tolerancia = 1e-8
+    with pytest.raises(ZeroDivisionError, match=r"Derivada muito próxima de zero em x = 0\.0\."):
+        newton_raphson(funcao, chute, tolerancia)
+
+def test_newton_raises_runtime_error_on_no_convergence():
+
+    #Usando f(x) = x^3 - 2x + 2 com chute x0=0, que oscila entre 0 e 1.
+    
+    funcao = x**3 - 2*x + 2
+    chute = 0.0
+    tolerancia = 1e-8
+    with pytest.raises(RuntimeError, match=r"Não convergiu após 1000 iterações\. Último x = 0\.0, f\(x\) = 1\.0"):
+        newton_raphson(funcao, chute, tolerancia)
+
+def test_newton_raphson_funcao_sem_problemas():
+
+    f = sp.sympify("x**4 - 4*x**2 + 4")
+    chute = 1.5
+    tolerancia = 1e-12
+    assert newton_raphson(f,chute,tolerancia) == approx(1.41421)
+
+# ====== TESTES DA SECANTE ======
+#Em breve
