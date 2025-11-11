@@ -8,6 +8,8 @@ A biblioteca implementa, em python, diversos métodos de erro, aproximação, in
 
 A documentação completa pode ser encontrada em: [\[link da documentacao\]](https://cb2325numericag1.readthedocs.io/pt-br/latest/)
 
+Os testes, implementados com notebooks (.ipynb) e os testes pelo pytest, estão implementados na pasta test/
+
 _Autores_
 - Alexander Kahleul
 - Cauan Carlos Rodrigues Dutra
