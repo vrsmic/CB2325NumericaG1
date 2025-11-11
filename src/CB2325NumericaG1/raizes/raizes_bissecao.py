@@ -3,23 +3,32 @@ import matplotlib.pyplot as plt
 from typing import Callable
         
 def bissecao(function: Callable, lower: float, upper: float, tolerance: float, plot: bool = False) -> float:
-    '''
-    Calcula a raiz aproximada de uma função usando o método da bisseção.
+    """
+    Encontra/aproxima uma raiz de uma função real de variável real usando o método de Newton–Raphson.
 
-    =============
+    Args:
+        function (Callable):
+            Função cuja raíz queremos encontrar ou aproximar.
+        lower (float):
+            Limite inferior do intervalo em que queremos calcular a raiz da função.
+        upper (float):
+            Limite superior do intervalo em que queremos calcular a raiz da função.
+        tolerance (float):
+            Critério de parada.
+            Valor mínimo que o intervalo pode assumir.
+        plot (bool = False):
+            Determina se uma visualização gráfica do método será plotada.
+            Por padrão, não será.
 
-    Parâmetros:
+    Returns:
+        float:
+            Valor aproximado da raiz.
 
-    function : Função cuja raiz queremos encontrar, deve aceitar apenas um argumento x.
-    lower : Limite inferior do intervalo em que queremos calcular a raiz da função.
-    upper : Limite superior do intervalo em que queremos calcular a raiz da função.
-    tolerance : Valor mínimo que o intervalo pode assumir.
-
-    ============
-
-    Retorna:
-    Valor aproximado da raiz da função, arredondado para 4 casas decimais.
-    '''
+    Raises:
+        ValueError:
+            Se a função não tem sinais opostos nos limites do intervalo.
+            Se a tolerância não for positiva.
+    """
     
     # Listas para salvar os dados para o gráfico
     lower_record = [lower]
