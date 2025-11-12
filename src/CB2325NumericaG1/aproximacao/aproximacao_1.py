@@ -89,7 +89,7 @@ def regressao(dados_x: npt.ArrayLike, dados_y: npt.ArrayLike, grau: int, plot: b
     return coeficientes
 
 # Regressão Linear.
-def regressao_linear(x: npt.ArrayLike, y: npt.ArrayLike, plot: bool = False) -> tuple[float, float]:
+def _regressao_linear(x: npt.ArrayLike, y: npt.ArrayLike, plot: bool = False) -> tuple[float, float]:
     """
     Calcula o coeficiente angular 'a' e o coeficiente linear 'b'
     de uma regressão linear simples (y = ax + b).
@@ -241,7 +241,7 @@ def regressao_logaritmica(x: npt.ArrayLike, y: npt.ArrayLike, plot: bool = False
     log_x = np.log(x)
 
     # Usa a função de regressão linear já existente nos dados transformados.
-    a, b = regressao_linear(log_x, y)
+    a, b = _regressao_linear(log_x, y)
 
     if plot:
         print(f"Coeficientes encontrados:")
