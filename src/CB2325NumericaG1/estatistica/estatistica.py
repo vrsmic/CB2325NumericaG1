@@ -37,7 +37,7 @@ def mean(x: npt.ArrayLike, pesos: npt.ArrayLike = None) -> float:
 
     media = sumx/sumpesos
 
-    return media
+    return float(media)
 
 def std(x: npt.ArrayLike, pesos: npt.ArrayLike = None) -> float:
     """
@@ -55,6 +55,8 @@ def std(x: npt.ArrayLike, pesos: npt.ArrayLike = None) -> float:
     media = mean(x)
     variancia = 0.0
     for v in x:
-        variancia += v-media**2
+        variancia += (v-media)**2
     
-    return variancia**0.5
+    variancia /= len(x)
+
+    return float(variancia**0.5)
