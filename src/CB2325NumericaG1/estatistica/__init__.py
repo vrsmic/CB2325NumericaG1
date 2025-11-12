@@ -1,0 +1,1 @@
+from .estatistica import mean, std
