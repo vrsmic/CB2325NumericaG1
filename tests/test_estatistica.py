@@ -8,28 +8,23 @@ from CB2325NumericaG1.estatistica import mean, std
 
 
 def test_mean_simples_inteiros():
-
     dados = [1, 2, 3]
     assert mean(dados) == approx(2.0)
 
 def test_mean_simples_floats():
-
     dados = [1.5, 2.5, 3.5]
     assert mean(dados) == approx(2.5)
 
 def test_mean_um_valor():
-
     dados = [42]
     assert mean(dados) == approx(42.0)
 
 def test_mean_ponderada_simples():
-
     dados = [1, 3]
     pesos = [1, 1]
     assert mean(dados, pesos) == approx(2.0)
 
 def test_mean_ponderada_diferente():
-
     # (10*1 + 20*3) / (1 + 3) = 70 / 4 = 17.5
     dados = [10, 20]
     pesos = [1, 3]
@@ -37,21 +32,15 @@ def test_mean_ponderada_diferente():
 
 # --- Testes para a função std ---
 
-
 def test_std_sem_desvio():
-
     dados = [5, 5, 5, 5]
     assert std(dados) == approx(0.0)
 
 def test_std_simples_inteiros():
-    # Testa o desvio padrão de [1, 3]. Média=2.
-
     dados = [1, 3]
     assert std(dados) == approx(1.0)
 
 def test_std_com_negativos():
-    # Testa o desvio padrão com números negativos. Média=0.
-
     dados = [-1, 1]
     assert std(dados) == approx(1.0)
 
