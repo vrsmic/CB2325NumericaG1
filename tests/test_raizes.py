@@ -53,13 +53,13 @@ y = sp.symbols('y')
 def test_newton_raphson_funcao_com_mais_de_uma_variavel():
     f = sp.sympify("sin(x) + cos(y)")
     chute = 2
-    tolerância = 1e-12
+    tolerancia = 1e-12
 
     with pytest.raises(ValueError,match= r"A expressão SymPy deve ter exatamente uma variável, mas foram encontradas 2: .*"):
-        newton_raphson(f,chute,tolerância)
+        newton_raphson(f,chute,tolerancia)
 
 def test_newton_raphson_funcao_de_tipo_incorreto():
-    f = 'sin(x) + con(y)'
+    f = 'sin(x) + cos(y)'
     chute = 2
     tolerancia = 1e-12
 
