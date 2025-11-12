@@ -38,3 +38,23 @@ def mean(x: npt.ArrayLike, pesos: npt.ArrayLike = None) -> float:
     media = sumx/sumpesos
 
     return media
+
+def std(x: npt.ArrayLike, pesos: npt.ArrayLike = None) -> float:
+    """
+    Calcula o desvio padrão de um conjunto de dados
+
+    Args:
+        x (npt.ArrayLike): 
+            Vetor com o conjunto de dados para calcular o desvio padrão
+
+    Returns:
+        float: 
+            Desvio padrão calculado 
+    """
+    
+    media = mean(x)
+    variancia = 0.0
+    for v in x:
+        variancia += v-media**2
+    
+    return variancia**0.5
