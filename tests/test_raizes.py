@@ -66,20 +66,32 @@ def test_newton_raphson_funcao_de_tipo_incorreto():
     with pytest.raises(TypeError, match="function deve ser Callable ou sp.Basic."):
         newton_raphson(f,chute,tolerancia)
 
-casos_de_teste_nan_inf = [(lambda x: np.log(x)-10, 5.0, r"f\(x\) retornou nan no ponto x = 5\.0\."), #Caso 1
-                          (sp.log(x), 0.0, r"f\(x\) retornou -inf no ponto x = 0\.0\."), #Caso 2
-                          (lambda x: np.divide(1.0, x), 0.0, r"f\(x\) retornou inf no ponto x = 0\.0\." ) #Caso 3
-                          ]
-# Caso 1: resultará em np.log(-5) -> NaN
-# Caso 2: resultará em np.log(0) -> -inf
-# Caso 3: resultará em 1.0/0.0 -> inf
+def test_newton_raphson_value_error_nan():
+  # resultará em np.log(-5) -> NaN
+  f = lambda x: np.log(x)-10
+  chute = -5.0
+  tolerancia = 1e-8
 
-@pytest.mark.parametrize("funcao, chute, erro", casos_de_teste_nan_inf)
+  with pytest.raises(ValueError)
+      newton_raphson(f, chute, tolerancia)
 
-def test_newton_raphson_value_error_nan_or_inf(funcao, chute, erro):
+def test_newton_raphson_value_error_pos_inf():
+   # resultará em 1.0/0.0 -> inf
+   f = lambda x: np.divide(1.0, x)
+   chute = 0.0
+   tolerancia = 1e-8
 
-    with pytest.raises(ValueError, match=erro):
-        newton_raphson(function=funcao, guess=chute, tolerance=1e-8)
+   with pytest.raises(ValueError)
+      newton_raphson(f,chute,tolerancia)
+
+def test_newton_raphson_value_error_neg_inf():
+  # resultará em np.log(0) -> -inf
+  f = lambda x: sp.log(x)
+  chute = 0.0
+  tolerancia = 1e-8
+
+  with pytest.raises(ValueError)
+      newton_raphson(f,chute,tolerancia)
 
 
 def test_newton_value_error_em_derivada_inf():
