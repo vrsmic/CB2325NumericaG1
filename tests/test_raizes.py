@@ -72,7 +72,7 @@ def test_newton_raphson_value_error_nan():
   chute = -5.0
   tolerancia = 1e-8
 
-  with pytest.raises(ValueError)
+  with pytest.raises(ValueError):
       newton_raphson(f, chute, tolerancia)
 
 def test_newton_raphson_value_error_pos_inf():
@@ -81,7 +81,7 @@ def test_newton_raphson_value_error_pos_inf():
    chute = 0.0
    tolerancia = 1e-8
 
-   with pytest.raises(ValueError)
+   with pytest.raises(ValueError):
       newton_raphson(f,chute,tolerancia)
 
 def test_newton_raphson_value_error_neg_inf():
@@ -90,7 +90,7 @@ def test_newton_raphson_value_error_neg_inf():
   chute = 0.0
   tolerancia = 1e-8
 
-  with pytest.raises(ValueError)
+  with pytest.raises(ValueError):
       newton_raphson(f,chute,tolerancia)
 
 
