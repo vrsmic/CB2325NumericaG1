@@ -10,7 +10,7 @@ import numpy.testing as npt
 import sympy as sp
 
 # Funções a serem testadas (do outro arquivo)
-from CB2325NumericaG1.aproximacao import regressao, regressao_linear, regressao_logaritmica, polinomio_de_taylor
+from CB2325NumericaG1.aproximacao import regressao, ajuste_linear, regressao_logaritmica, polinomio_de_taylor, ajuste_trigonometrico
 
 TOLERANCIA = 1e-6 # Tolerância para comparações de float.
 
@@ -101,7 +101,6 @@ def test_regressao_logaritmica_erro_x_negativo():
     with pytest.raises(ValueError, match="positivos"):
         regressao_logaritmica(x, y)
 
-
 ### 4. Testes para polinomio_de_taylor()
 def test_taylor_exp_x_em_zero(sym_x):
     # Série de e^x em x=0
@@ -137,3 +136,42 @@ def test_taylor_plot_executa(sym_x, capsys):
     
     captured = capsys.readouterr()
     assert "Gerando gráfico de comparação" in captured.out
+
+### 5. Testes para ajuste_trigonometrico()
+
+from CB2325NumericaG1.aproximacao import ajuste_trigonometrico
+
+def test_ajuste_trigonometrico_perfeito_misto():
+    T = 4.0
+    omega = np.pi / 2.0
+    
+    x = np.array([0, 1, 2, 3])
+    
+    y = np.array([
+        2.0 + 3.0*np.cos(omega*0) + 1.5*np.sin(omega*0), 
+        2.0 + 3.0*np.cos(omega*1) + 1.5*np.sin(omega*1), 
+        2.0 + 3.0*np.cos(omega*2) + 1.5*np.sin(omega*2), 
+        2.0 + 3.0*np.cos(omega*3) + 1.5*np.sin(omega*3)  
+    ])
+    
+    c0, c1, c2 = ajuste_trigonometrico(x, y, periodo=T, plot=False)
+    
+    npt.assert_allclose([c0, c1, c2], [2.0, 3.0, 1.5], atol=TOLERANCIA)
+
+def test_ajuste_trigonometrico_erro_poucos_pontos():
+    x = np.array([1, 2])
+    y = np.array([5, 4])
+    T = 10.0
+    
+    with pytest.raises(ValueError, match="pelo menos 3 pontos"):
+        ajuste_trigonometrico(x, y, periodo=T)
+
+def test_ajuste_trigonometrico_erro_periodo_invalido():
+    x = np.array([1, 2, 3, 4])
+    y = np.array([1, 2, 1, 2])
+    
+    with pytest.raises(ValueError, match="período deve ser um valor positivo"):
+        ajuste_trigonometrico(x, y, periodo=0)
+        
+    with pytest.raises(ValueError, match="período deve ser um valor positivo"):
+        ajuste_trigonometrico(x, y, periodo=-2.0)
