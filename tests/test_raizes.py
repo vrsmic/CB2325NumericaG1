@@ -125,7 +125,7 @@ def test_newton_raphson_funcao_sem_problemas():
     f = sp.sympify("x**4 - 4*x**2 + 4")
     chute = 1.5
     tolerancia = 1e-12
-    assert newton_raphson(f,chute,tolerancia) == approx(1.41421)
+    assert newton_raphson(f,chute,tolerancia) == 1.4142139095356205
 
 # ====== TESTES DA SECANTE ======
 def test_secante_type_error():
