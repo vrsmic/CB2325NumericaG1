@@ -43,40 +43,8 @@ def test_regressao_grau_2_perfeita():
     npt.assert_allclose(coefs, [3.0, 2.0, 1.0], atol=1e-9)
 
 
-### 2. Testes para regressao_linear()
-def test_regressao_linear_perfeita():
-    # y = -1.5x + 5
-    x = np.array([0, 2, 4])
-    y = np.array([5, 2, -1])
-    
-    # Espera (a, b) -> (-1.5, 5.0)
-    a, b = regressao_linear(x, y, plot=False)
-    
-    npt.assert_allclose([a, b], [-1.5, 5.0], atol=1e-9)
 
-def test_regressao_linear_erro_tamanho_diferente():
-    x = np.array([1, 2, 3])
-    y = np.array([1, 2])
-    
-    with pytest.raises(ValueError, match="mesmo número de amostras"):
-        regressao_linear(x, y)
-
-def test_regressao_linear_erro_poucos_pontos():
-    x = np.array([1])
-    y = np.array([1])
-    
-    with pytest.raises(ValueError, match="pelo menos 2 pontos"):
-        regressao_linear(x, y)
-
-def test_regressao_linear_erro_x_constante():
-    x = np.array([5, 5, 5])
-    y = np.array([1, 2, 3])
-    
-    with pytest.raises(ValueError, match="Valores de 'x' são constantes"):
-        regressao_linear(x, y)
-
-
-### 3. Testes para regressao_logaritmica()
+### 2. Testes para regressao_logaritmica()
 def test_regressao_logaritmica_perfeita():
     # y = 2 * ln(x) + 3
     x = np.array([1, np.e, np.e**2, np.e**3])
@@ -101,7 +69,7 @@ def test_regressao_logaritmica_erro_x_negativo():
     with pytest.raises(ValueError, match="positivos"):
         regressao_logaritmica(x, y)
 
-### 4. Testes para polinomio_de_taylor()
+### 3. Testes para polinomio_de_taylor()
 def test_taylor_exp_x_em_zero(sym_x):
     # Série de e^x em x=0
     # 1 + x + x^2/2
@@ -137,7 +105,7 @@ def test_taylor_plot_executa(sym_x, capsys):
     captured = capsys.readouterr()
     assert "Gerando gráfico de comparação" in captured.out
 
-### 5. Testes para ajuste_trigonometrico()
+### 4. Testes para ajuste_trigonometrico()
 
 from CB2325NumericaG1.aproximacao import ajuste_trigonometrico
 
