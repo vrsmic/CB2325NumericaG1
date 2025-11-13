@@ -12,7 +12,7 @@ setup(
         #MAJOR eh que vai mudar muita coisa, e vai gerar incompatibilidade com algum código antigo
         #MINOR eh implementacao de feature nova, não gera imcompatibilidade
         #PATCH eh correcao de bug
-    version="1.0.0",
+    version="1.0.1",
     
     #informacoes sobre a biblioteca
     #esses campos sao opcionais, ai cada um bota seu nome e email (se quiser)
