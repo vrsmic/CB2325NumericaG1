@@ -156,9 +156,9 @@ def test_secante_zero_division_error():
 def test_secante_runtime_error():
     def f_no_root(x):
         # Função que não cruza o eixo x
-        return np.exp(x) + 10
+        return x**2 + 1
     with pytest.raises(RuntimeError):
-        secante(f_no_root, 0.0, 1.0, 1e-12)
+        secante(f_no_root, 0.0, 2.0, 1e-12)
 
 # Teste sem erros:
 def test_secante_successo():
