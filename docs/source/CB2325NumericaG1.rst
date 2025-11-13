@@ -12,6 +12,7 @@ Subpackages
    CB2325NumericaG1.integracao
    CB2325NumericaG1.interpolacao
    CB2325NumericaG1.raizes
+   CB2325NumericaG1.estatistica
 
 Module contents
 ---------------
