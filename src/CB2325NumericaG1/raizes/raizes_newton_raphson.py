@@ -79,27 +79,45 @@ def newton_raphson(function: Union[Callable, sp.Basic], guess: float, tolerance:
         raise TypeError("function deve ser Callable ou sp.Basic.")
     
     root = None
+    fx = None
+
     for i in range(MAX_ITERS):
-        fx = float(f(x0))
+        try:
+            fx_val = f(x0)
+            fx = float(fx_val)
+        except Exception as e:
+            raise ValueError(f"f não pode ser avaliada em {x0}: {e}")
+        
         if np.isnan(fx) or np.isinf(fx):
             raise ValueError(f"f(x) retornou {fx} no ponto x = {x0}.")
-        # critério pelo valor da função
+        
         if abs(fx) < tolerance:
             root = x0
             break
-        dfx = float(df(x0))
+
+        try:
+            dfx_val = df(x0)
+            dfx = float(dfx_val)
+        except Exception as e:
+            raise ValueError(f"f' não pode ser avaliada em {x0}: {e}")
+
         if np.isnan(dfx) or np.isinf(dfx):
+            # Mensagem igual à original
             raise ValueError(f"f'(x) retornou {dfx} no ponto x = {x0}.")
+
         if abs(dfx) < 1e-16:
             raise ZeroDivisionError(f"Derivada muito próxima de zero em x = {x0}.")
+        
         x1 = x0 - fx / dfx
         x_record.append(x1)
-        # critério pelo passo
+
+        # Critérios de parada 
         if abs(x1 - x0) < tolerance:
             root = x1
             break
-        x0 = x1
-    
+
+        x0 = x1   
+        
     if root is None:
         raise RuntimeError(f"Não convergiu após {MAX_ITERS} iterações. Último x = {x0}, f(x) = {fx}")
     
