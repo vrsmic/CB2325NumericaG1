@@ -32,6 +32,8 @@ def newton_raphson(function: Union[Callable, sp.Basic], guess: float, tolerance:
         ValueError:
             Se a expressão SymPy tiver mais de uma variável.
             Se ocorrer NaN/Inf em algum momento da iteração.
+            Se em algum momento da iteração o ponto xn nao estiver
+            no domínio da f ou da df
         TypeError:
             Se function não for Callable ou sp.Basic.
         ZeroDivisionError:
@@ -102,7 +104,6 @@ def newton_raphson(function: Union[Callable, sp.Basic], guess: float, tolerance:
             raise ValueError(f"f' não pode ser avaliada em {x0}: {e}")
 
         if np.isnan(dfx) or np.isinf(dfx):
-            # Mensagem igual à original
             raise ValueError(f"f'(x) retornou {dfx} no ponto x = {x0}.")
 
         if abs(dfx) < 1e-16:

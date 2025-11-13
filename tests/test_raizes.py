@@ -67,16 +67,16 @@ def test_newton_raphson_funcao_de_tipo_incorreto():
         newton_raphson(f,chute,tolerancia)
 
 def test_newton_raphson_value_error_nan():
-  # resultará em np.log(-5) -> NaN
-  f = lambda x: np.log(x)-10
-  chute = -5.0
-  tolerancia = 1e-8
+    # resultará em np.log(negativo) -> NaN
+    f = lambda x: np.log(x)
+    chute = 3.0
+    tolerancia = 1e-8
 
-  with pytest.raises(ValueError):
+    with pytest.raises(ValueError):
       newton_raphson(f, chute, tolerancia)
 
 def test_newton_raphson_value_error_pos_inf():
-   # resultará em 1.0/0.0 -> inf
+   # resultará em 1.0/0.0 -> +inf
    f = lambda x: np.divide(1.0, x)
    chute = 0.0
    tolerancia = 1e-8
@@ -93,10 +93,9 @@ def test_newton_raphson_value_error_neg_inf():
   with pytest.raises(ValueError):
       newton_raphson(f,chute,tolerancia)
 
-
 def test_newton_value_error_em_derivada_inf():
     # Usando 2*sqrt(x) para simplificar a derivada para 1/sqrt(x)
-    funcao = 2 * sp.sqrt(x) 
+    funcao = 2 * sp.sqrt(x) + 1
     chute = 0.0
     tolerancia = 1e-8
     with pytest.raises(ValueError):
