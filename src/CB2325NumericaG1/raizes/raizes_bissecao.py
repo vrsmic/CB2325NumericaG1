@@ -4,7 +4,7 @@ from typing import Callable
         
 def bissecao(function: Callable, lower: float, upper: float, tolerance: float, plot: bool = False) -> float:
     """
-    Encontra/aproxima uma raiz de uma função real de variável real usando o método de Newton–Raphson.
+    Encontra/aproxima uma raiz de uma função real de variável real usando o método da Bisseção.
 
     Args:
         function (Callable):
